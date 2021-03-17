@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 libheif-rs = { git = "https://github.com/spraints/libheif-rs.git" }
+png = "0.16.8"
