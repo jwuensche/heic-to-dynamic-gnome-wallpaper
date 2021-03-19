@@ -1,13 +1,30 @@
-use libheif_rs::{Channel, RgbChroma, ColorSpace, HeifContext, Result};
+use libheif_rs::{RgbChroma, ColorSpace, HeifContext};
 use std::io::{Write, BufWriter};
 
+use clap::{App, Arg};
+
+mod schema;
+
 fn main() -> std::io::Result<()> {
-    let image_ctx = HeifContext::read_from_file("images/foo.heic").unwrap();
+    let matches = App::new("heic-to-gxml")
+        .arg(Arg::with_name("INPUT")
+             .help("Image which should be transformed")
+             .takes_value(true)
+             .value_name("INPUT")
+             .required(true)
+             .index(1))
+        .get_matches();
+
+    let xml_file = std::fs::OpenOptions::new().read(true).open("adwaita-timed.xml")?;
+    let xml: schema::Background = serde_xml_rs::from_reader(xml_file).unwrap();
+
+    let path = matches.value_of("INPUT").ok_or(std::io::Error::new(std::io::ErrorKind::NotFound, "Could not read INPUT"))?;
+    let image_ctx = HeifContext::read_from_file(path).unwrap();
     println!("File contains {} images", image_ctx.number_of_top_level_images());
-    for (img_no, img_id) in image_ctx.list_of_image_handle_ids(10).into_iter().enumerate() {
+    for (img_no, img_id) in image_ctx.list_of_image_handle_ids(100).into_iter().enumerate() {
         println!("{:?}", img_id);
         let prim_image = image_ctx.image_handle(img_id).unwrap();
-        let metadata = prim_image.list_of_metadata_block_ids("", 10);
+        let metadata = prim_image.list_of_metadata_block_ids("", 100);
 
         let width = prim_image.width();
         let height = prim_image.height();
@@ -38,9 +55,6 @@ fn main() -> std::io::Result<()> {
         for ((red, green), blue) in red.into_iter().zip(green.into_iter()).zip(blue.into_iter()) {
             w.write(&[*red, *green, *blue])?;
         }
-
-
-
     }
     Ok(())
 }
