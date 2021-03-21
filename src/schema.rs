@@ -1,15 +1,23 @@
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Deserialize, Serialize)]
+#[serde(rename = "background")]
 pub struct Background {
     #[serde(rename = "$value")]
-    images: Vec<Image>,
+    pub images: Vec<Image>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 pub enum Image {
     #[serde(rename = "starttime")]
-    StartTime(StartTime),
+    StartTime{
+        year: u16,
+        month: u16,
+        day: u16,
+        hour: u16,
+        minute: u16,
+        second: u16,
+    },
     #[serde(rename = "static")]
     Static {
         duration: f32,
@@ -23,14 +31,4 @@ pub enum Image {
         from: String,
         to: String,
     }
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct StartTime {
-    year: u16,
-    month: u16,
-    day: u16,
-    hour: u16,
-    minute: u16,
-    second: u16,
 }
