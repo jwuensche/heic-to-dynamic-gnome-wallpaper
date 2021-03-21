@@ -16,22 +16,25 @@ fn main() -> Result<()> {
              .required(true)
              .index(1))
         .get_matches();
-
     let mut xml_background = schema::Background {
         images: Vec::new(),
-    };
-    xml_background.images.push(schema::Image::StartTime {
+        starttime: schema::StartTime {
         year: 2011,
         month: 10,
         day: 1,
         hour: 7,
         minute: 0,
         second: 0,
-    });
-    let path = matches.value_of("INPUT").ok_or(std::io::Error::new(std::io::ErrorKind::NotFound, "Could not read INPUT"))?;
+    }};
+    let path = matches.value_of("INPUT").ok_or(anyhow::Error::msg("Could not read INPUT"))?;
     let image_ctx = HeifContext::read_from_file(path).unwrap();
-    println!("File contains {} images", image_ctx.number_of_top_level_images());
-    for (img_no, img_id) in image_ctx.list_of_image_handle_ids(100).into_iter().enumerate() {
+
+    let number_of_images = image_ctx.number_of_top_level_images();
+    println!("File contains {} images", number_of_images);
+
+    let average_length = 86400 / number_of_images / 2;
+
+    for (img_no, img_id) in image_ctx.list_of_image_handle_ids(number_of_images).into_iter().enumerate() {
         println!("{:?}", img_id);
         let prim_image = image_ctx.image_handle(img_id).unwrap();
         let metadata = prim_image.list_of_metadata_block_ids("", 100);
@@ -67,10 +70,26 @@ fn main() -> Result<()> {
             w.write(&[*red, *green, *blue])?;
         }
 
+        // Add to Background Structure
+
         xml_background.images.push(schema::Image::Static {
-            duration: 3600.0,
+            duration: average_length as f32,
             file: format!("{}/{}.png",p.to_string_lossy(), img_no)
-        })
+        });
+
+        xml_background.images.push(schema::Image::Transition {
+            kind: "overlay".to_string(),
+            duration: average_length as f32,
+            from: format!("{}/{}.png", p.to_string_lossy(), img_no),
+            to: format!("{}/{}.png", p.to_string_lossy(), {
+                if img_no < number_of_images - 1 {
+                    img_no + 1
+                } else {
+                    0
+                }
+            })
+
+        });
     }
 
     let result_file = std::fs::OpenOptions::new().write(true).truncate(true).create(true).open("default.xml")?;

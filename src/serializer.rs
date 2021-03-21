@@ -1,5 +1,5 @@
 use std::io::Write;
-use crate::schema::{Background, Image};
+use crate::schema::{Background, Image, StartTime};
 use anyhow::Result;
 
 pub struct GnomeXMLBackgroundSerializer<'a, T: Write> {
@@ -15,9 +15,8 @@ impl<'a, T> GnomeXMLBackgroundSerializer<'a, T> where T: Write {
 
     pub fn serialize(&mut self, background: &Background) -> Result<()> {
         // By definition we can only find one starttime
-        let mut biter = background.images.iter();
-        match biter.next() {
-            Some(Image::StartTime { year, month, day, hour, minute, second }) => {
+        match background.starttime {
+            StartTime { year, month, day, hour, minute, second } => {
                 self.writer.write(b"<background>\n")?;
                 self.writer.write(b"\t<starttime>\n")?;
                 write!(self.writer, "\t\t<year>{}</year>\n", year)?;
@@ -27,9 +26,9 @@ impl<'a, T> GnomeXMLBackgroundSerializer<'a, T> where T: Write {
                 write!(self.writer, "\t\t<minute>{}</minute>\n", minute)?;
                 write!(self.writer, "\t\t<second>{}</second>\n", second)?;
                 self.writer.write(b"\t</starttime>\n")?;
-            },
-            _ => return Err(anyhow::Error::msg("First item not startime. This is required by convention.")),
+            }
         }
+        let mut biter = background.images.iter();
 
         for entry in biter {
             match entry {
@@ -45,9 +44,6 @@ impl<'a, T> GnomeXMLBackgroundSerializer<'a, T> where T: Write {
                     write!(self.writer, "\t\t<from>{}</from>\n", from)?;
                     write!(self.writer, "\t\t<to>{}</to>\n", to)?;
                     write!(self.writer, "\t</transition>\n")?;
-                }
-                Image::StartTime {..} => {
-                    return Err(anyhow::Error::msg("Cannot define starttime multiple times."))
                 }
             }
         }
