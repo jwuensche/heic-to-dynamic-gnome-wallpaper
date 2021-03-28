@@ -1,5 +1,5 @@
 use std::io::Write;
-use crate::schema::{Background, Image, StartTime};
+use crate::schema::xml::{Background, Image, StartTime};
 use anyhow::Result;
 
 pub struct GnomeXMLBackgroundSerializer<'a, T: Write> {

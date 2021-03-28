@@ -8,8 +8,10 @@ edition = "2018"
 
 [dependencies]
 anyhow = "1.0.39"
+base64 = "0.13.0"
 clap = "2.33.3"
 libheif-rs = { git = "https://github.com/spraints/libheif-rs.git" }
+plist = "1.1.0"
 png = "0.16.8"
 quick-xml = { version = "0.22.0", features = ["serialize"] }
 serde = { version = "1.0.124", features = ["derive"] }

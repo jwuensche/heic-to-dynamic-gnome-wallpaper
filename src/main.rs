@@ -7,6 +7,8 @@ use clap::{App, Arg};
 mod schema;
 mod serializer;
 
+use schema::xml;
+
 fn main() -> Result<()> {
     let matches = App::new("heic-to-gxml")
         .arg(Arg::with_name("INPUT")
@@ -16,13 +18,13 @@ fn main() -> Result<()> {
              .required(true)
              .index(1))
         .get_matches();
-    let mut xml_background = schema::Background {
+    let mut xml_background = xml::Background {
         images: Vec::new(),
-        starttime: schema::StartTime {
+        starttime: xml::StartTime {
         year: 2011,
         month: 10,
         day: 1,
-        hour: 7,
+        hour: 0b111,
         minute: 0,
         second: 0,
     }};
@@ -72,12 +74,12 @@ fn main() -> Result<()> {
 
         // Add to Background Structure
 
-        xml_background.images.push(schema::Image::Static {
+        xml_background.images.push(xml::Image::Static {
             duration: average_length as f32,
             file: format!("{}/{}.png",p.to_string_lossy(), img_no)
         });
 
-        xml_background.images.push(schema::Image::Transition {
+        xml_background.images.push(xml::Image::Transition {
             kind: "overlay".to_string(),
             duration: average_length as f32,
             from: format!("{}/{}.png", p.to_string_lossy(), img_no),
