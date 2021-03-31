@@ -32,13 +32,13 @@ impl<'a, T> GnomeXMLBackgroundSerializer<'a, T> where T: Write {
 
         for entry in biter {
             match entry {
-                Image::Static { duration, file } => {
+                Image::Static { duration, file, .. } => {
                     write!(self.writer, "\t<static>\n")?;
                     write!(self.writer, "\t\t<duration>{}</duration>\n", duration)?;
                     write!(self.writer, "\t\t<file>{}</file>\n", file)?;
                     write!(self.writer, "\t</static>\n")?;
                 }
-                Image::Transition { kind, duration, from, to } => {
+                Image::Transition { kind, duration, from, to, .. } => {
                     write!(self.writer, "\t<transition type=\"{}\">\n", kind)?;
                     write!(self.writer, "\t\t<duration>{}</duration>\n", duration)?;
                     write!(self.writer, "\t\t<from>{}</from>\n", from)?;

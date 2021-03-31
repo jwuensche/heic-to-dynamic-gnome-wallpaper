@@ -19,11 +19,13 @@ pub enum Image {
     Static {
         duration: f32,
         file: String,
+        idx: usize,
     },
     Transition {
         kind: String,
         duration: f32,
         from: String,
         to: String,
+        idx: usize,
     }
 }
