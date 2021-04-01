@@ -22,6 +22,7 @@ fn main() -> Result<()> {
              .index(1))
         .get_matches();
     let path = matches.value_of("INPUT").ok_or(anyhow::Error::msg("Could not read INPUT"))?;
+    let parent_directory = std::path::Path::new(path).ancestors().nth(1).unwrap().canonicalize().unwrap();
     let image_ctx = HeifContext::read_from_file(path).unwrap();
 
     let number_of_images = image_ctx.number_of_top_level_images();
@@ -31,26 +32,24 @@ fn main() -> Result<()> {
     let base64plist = metadata::get_wallpaper_metadata(&image_ctx);
 
     if let None = base64plist {
-        eprintln!("No valid metadata found describing wallpaper! Please check if the mime field is available and carries an apple_desktop:h24 and/or apple_desktop:sun value");
+        eprintln!("No valid metadata found describing wallpaper! Please check if the mime field is available and carries an apple_desktop:h24 and/or apple_desktop:solar value");
         return Err(anyhow::Error::msg("No valid metadata"))
     }
 
     let mut plist = metadata::get_time_plist_from_base64(&base64plist.unwrap())?;
     println!("Found plist {:?}", plist);
 
-    let average_length = 86400 / number_of_images / 2;
-
     plist.time_slices.sort_by(|a,b| a.time.partial_cmp(&b.time).unwrap());
-
+    let first_time = plist.time_slices.get(0).unwrap().time;
     let mut xml_background = xml::Background {
         images: Vec::new(),
         starttime: xml::StartTime {
         year: 2011,
         month: 10,
         day: 1,
-        hour: plist.ap.d as u16,
-        minute: 0,
-        second: 0,
+        hour: first_time as u16 / 60 / 60,
+        minute: first_time as u16 / 60 % 60,
+        second: first_time as u16 % 60,
         }};
 
 
@@ -69,9 +68,8 @@ fn main() -> Result<()> {
         let red = planes.r.unwrap().data;
         let green = planes.g.unwrap().data;
         let blue = planes.b.unwrap().data;
-        let p = std::path::Path::new(path).ancestors().nth(1).unwrap().canonicalize().unwrap();
 
-        let file = std::fs::OpenOptions::new().create(true).write(true).open(format!("{}/{}.png",p.to_string_lossy(), time_idx))?;
+        let file = std::fs::OpenOptions::new().create(true).write(true).open(format!("{}/{}.png",parent_directory.to_string_lossy(), time_idx))?;
         let writer = BufWriter::new(file);
 
         let mut pngencoder = png::Encoder::new(writer, width, height);
@@ -89,7 +87,7 @@ fn main() -> Result<()> {
 
         xml_background.images.push(xml::Image::Static {
             duration: 1 as f32,
-            file: format!("{}/{}.png",p.to_string_lossy(), time_idx),
+            file: format!("{}/{}.png",parent_directory.to_string_lossy(), time_idx),
             idx: time_idx,
         });
 
@@ -100,11 +98,11 @@ fn main() -> Result<()> {
                     (time - plist.time_slices.get(time_idx + 1).unwrap().time).abs() * 86400.0 - 1.0
                 } else {
                     let first_time = plist.time_slices.get(0).unwrap().time;
-                    ((time - 1.0).abs() + first_time) * 86400.0 - 1.0
+                    (((time - 1.0).abs() + first_time) * 86400.0 - 1.0).ceil()
                 }
             },
-            from: format!("{}/{}.png", p.to_string_lossy(), time_idx),
-            to: format!("{}/{}.png", p.to_string_lossy(), {
+            from: format!("{}/{}.png", parent_directory.to_string_lossy(), time_idx),
+            to: format!("{}/{}.png", parent_directory.to_string_lossy(), {
                 if time_idx < number_of_images - 1 {
                     time_idx + 1
                 } else {
@@ -124,7 +122,7 @@ fn main() -> Result<()> {
         }
     });
 
-    let result_file = std::fs::OpenOptions::new().write(true).truncate(true).create(true).open("default.xml")?;
+    let result_file = std::fs::OpenOptions::new().write(true).truncate(true).create(true).open(format!("{}/default.xml", parent_directory.to_string_lossy()))?;
     let mut result = BufWriter::new(result_file);
     let mut ser = serializer::GnomeXMLBackgroundSerializer::new(&mut result);
     ser.serialize(&xml_background)?;

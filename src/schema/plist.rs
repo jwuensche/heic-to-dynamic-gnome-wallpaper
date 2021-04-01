@@ -4,13 +4,16 @@ use serde::Deserialize;
 pub struct WallpaperMetaTime {
     #[serde(rename = "ti")]
     pub time_slices: Vec<TimeSlice>,
-    pub ap: Ap,
+    #[serde(rename = "ap")]
+    pub appearance: Appearance,
 }
 
 #[derive(Deserialize, Debug)]
-pub struct Ap {
-    pub d: i32,
-    pub l: i32,
+pub struct Appearance {
+    #[serde(rename = "d")]
+    pub dark: i32,
+    #[serde(rename = "l")]
+    pub light: i32,
 }
 
 #[derive(Deserialize, Debug)]
@@ -25,4 +28,20 @@ pub struct TimeSlice {
 pub struct WallpaperMetaSun {
     // TODO: Add Definition for Sun based Wallpapers
     // The `TimeSlice` struct will have to be replaced here.
+    #[serde(rename = "si")]
+    pub solar_slices: Vec<SolarSlice>,
+    #[serde(rename = "ap")]
+    pub appearance: Appearance,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct SolarSlice {
+    #[serde(rename = "a")]
+    pub altitude: f32,
+    #[serde(rename = "i")]
+    pub idx: usize,
+    #[serde(rename = "o")]
+    pub light_mode: usize,
+    #[serde(rename = "z")]
+    pub azimuth: f32,
 }
