@@ -1,22 +1,30 @@
-use std::io::Write;
 use crate::schema::xml::{Background, Image, StartTime};
 use anyhow::Result;
+use std::io::Write;
 
 pub struct GnomeXMLBackgroundSerializer<'a, T: Write> {
     writer: &'a mut T,
 }
 
-impl<'a, T> GnomeXMLBackgroundSerializer<'a, T> where T: Write {
+impl<'a, T> GnomeXMLBackgroundSerializer<'a, T>
+where
+    T: Write,
+{
     pub fn new(writer: &'a mut T) -> Self {
-        Self {
-            writer
-        }
+        Self { writer }
     }
 
     pub fn serialize(&mut self, background: &Background) -> Result<()> {
         // By definition we can only find one starttime
         match background.starttime {
-            StartTime { year, month, day, hour, minute, second } => {
+            StartTime {
+                year,
+                month,
+                day,
+                hour,
+                minute,
+                second,
+            } => {
                 self.writer.write(b"<background>\n")?;
                 self.writer.write(b"\t<starttime>\n")?;
                 write!(self.writer, "\t\t<year>{}</year>\n", year)?;
@@ -38,7 +46,13 @@ impl<'a, T> GnomeXMLBackgroundSerializer<'a, T> where T: Write {
                     write!(self.writer, "\t\t<file>{}</file>\n", file)?;
                     write!(self.writer, "\t</static>\n")?;
                 }
-                Image::Transition { kind, duration, from, to, .. } => {
+                Image::Transition {
+                    kind,
+                    duration,
+                    from,
+                    to,
+                    ..
+                } => {
                     write!(self.writer, "\t<transition type=\"{}\">\n", kind)?;
                     write!(self.writer, "\t\t<duration>{}</duration>\n", duration)?;
                     write!(self.writer, "\t\t<from>{}</from>\n", from)?;

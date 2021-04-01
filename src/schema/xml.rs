@@ -27,5 +27,5 @@ pub enum Image {
         from: String,
         to: String,
         idx: usize,
-    }
+    },
 }
