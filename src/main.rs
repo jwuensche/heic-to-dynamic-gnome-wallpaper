@@ -9,17 +9,40 @@ mod metadata;
 mod util;
 mod timebased;
 
+const INPUT: &str = "INPUT";
+const DIR: &str = "DIR";
+
+
 fn main() -> Result<()> {
     let matches = App::new("heic-to-gxml")
-        .arg(Arg::with_name("INPUT")
+        .arg(Arg::with_name(INPUT)
              .help("Image which should be transformed")
              .takes_value(true)
-             .value_name("INPUT")
+             .value_name(INPUT)
              .required(true)
-             .index(1))
+        )
+
+.arg(Arg::with_name(DIR)
+             .help("Into which directory the output images and schema should be written to.")
+             .long_help("Specifies into which directory created images should be written to. Default is the parent directory of the given image.")
+             .short("d")
+             .long("dir")
+             .takes_value(true)
+             .value_name(DIR)
+        )
         .get_matches();
-    let path = matches.value_of("INPUT").ok_or(anyhow::Error::msg("Could not read INPUT"))?;
-    let parent_directory = std::path::Path::new(path).ancestors().nth(1).unwrap().canonicalize().unwrap();
+    let path = matches.value_of(INPUT).ok_or(anyhow::Error::msg("Could not read INPUT"))?;
+
+    let parent_directory;
+    if matches.is_present(DIR) {
+        let nu_path = std::path::Path::new(matches.value_of(DIR).unwrap()).to_path_buf();
+        if !nu_path.exists() {
+            std::fs::create_dir_all(&nu_path)?
+        }
+        parent_directory = nu_path.canonicalize()?;
+    } else {
+        parent_directory = std::path::Path::new(path).ancestors().nth(1).unwrap().canonicalize().unwrap();
+    }
     let image_ctx = HeifContext::read_from_file(path).unwrap();
 
     // FETCH file wide metadata
