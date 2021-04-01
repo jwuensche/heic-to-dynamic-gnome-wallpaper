@@ -1,5 +1,5 @@
 [package]
-name = "heic-to-gxml"
+name = "heic-to-gnome-xml-wallpaper"
 version = "0.1.0"
 authors = ["Johannes Wünsche <johannes@spacesnek.rocks>"]
 edition = "2018"
@@ -10,7 +10,7 @@ edition = "2018"
 anyhow = "1.0.39"
 base64 = "0.13.0"
 clap = "2.33.3"
-libheif-rs = { git = "https://github.com/spraints/libheif-rs.git" }
+libheif-rs = "0.14"
 plist = "1.1.0"
 png = "0.16.8"
 quick-xml = { version = "0.22.0", features = ["serialize"] }
