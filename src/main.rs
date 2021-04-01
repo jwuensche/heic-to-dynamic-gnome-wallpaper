@@ -7,10 +7,13 @@ use clap::{App, Arg};
 mod schema;
 mod serializer;
 mod metadata;
+mod util;
 
 use schema::{plist::TimeSlice, xml::{self}};
 use schema::xml::Image::Static;
 use schema::xml::Image::Transition;
+
+const DAY_SECS: f32 = 86400.0;
 
 fn main() -> Result<()> {
     let matches = App::new("heic-to-gxml")
@@ -40,16 +43,16 @@ fn main() -> Result<()> {
     println!("Found plist {:?}", plist);
 
     plist.time_slices.sort_by(|a,b| a.time.partial_cmp(&b.time).unwrap());
-    let first_time = plist.time_slices.get(0).unwrap().time;
+    let first_time = plist.time_slices.get(0).unwrap().time as u16;
     let mut xml_background = xml::Background {
         images: Vec::new(),
         starttime: xml::StartTime {
         year: 2011,
         month: 10,
         day: 1,
-        hour: first_time as u16 / 60 / 60,
-        minute: first_time as u16 / 60 % 60,
-        second: first_time as u16 % 60,
+        hour: util::to_rem_hours(first_time),
+        minute: util::to_rem_min(first_time),
+        second: util::to_rem_sec(first_time),
         }};
 
 
@@ -95,10 +98,10 @@ fn main() -> Result<()> {
             kind: "overlay".to_string(),
             duration: {
                 if time_idx < number_of_images - 1 {
-                    (time - plist.time_slices.get(time_idx + 1).unwrap().time).abs() * 86400.0 - 1.0
+                    (time - plist.time_slices.get(time_idx + 1).unwrap().time).abs() * DAY_SECS - 1.0
                 } else {
                     let first_time = plist.time_slices.get(0).unwrap().time;
-                    (((time - 1.0).abs() + first_time) * 86400.0 - 1.0).ceil()
+                    (((time - 1.0).abs() + first_time) * DAY_SECS - 1.0).ceil()
                 }
             },
             from: format!("{}/{}.png", parent_directory.to_string_lossy(), time_idx),
