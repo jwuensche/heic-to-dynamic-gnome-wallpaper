@@ -9,7 +9,7 @@ mod metadata;
 mod util;
 mod timebased;
 
-const INPUT: &str = "INPUT";
+const INPUT: &str = "IMAGE";
 const DIR: &str = "DIR";
 
 
