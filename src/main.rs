@@ -9,6 +9,7 @@ mod serializer;
 mod metadata;
 mod util;
 
+use util::{time, png};
 use schema::{plist::TimeSlice, xml::{self}};
 use schema::xml::Image::Static;
 use schema::xml::Image::Transition;
@@ -50,9 +51,9 @@ fn main() -> Result<()> {
         year: 2011,
         month: 10,
         day: 1,
-        hour: util::to_rem_hours(first_time),
-        minute: util::to_rem_min(first_time),
-        second: util::to_rem_sec(first_time),
+        hour: time::to_rem_hours(first_time),
+        minute: time::to_rem_min(first_time),
+        second: time::to_rem_sec(first_time),
         }};
 
 
@@ -61,33 +62,9 @@ fn main() -> Result<()> {
         let img_id = *image_ids.get(*idx).expect("Could not fetch image id described in metadata");
         println!("Image ID: {:?}", img_id);
         let prim_image = image_ctx.image_handle(img_id).unwrap();
-
-        let width = prim_image.width();
-        let height = prim_image.height();
-        //let decoded = prim_image.decode(ColorSpace::YCbCr(libheif_rs::Chroma::C444), false).unwrap();
-        let decoded = prim_image.decode(ColorSpace::Rgb(RgbChroma::C444), false).unwrap();
-        let planes = decoded.planes();
-
-        let red = planes.r.unwrap().data;
-        let green = planes.g.unwrap().data;
-        let blue = planes.b.unwrap().data;
-
-        let file = std::fs::OpenOptions::new().create(true).write(true).open(format!("{}/{}.png",parent_directory.to_string_lossy(), time_idx))?;
-        let writer = BufWriter::new(file);
-
-        let mut pngencoder = png::Encoder::new(writer, width, height);
-        pngencoder.set_color(png::ColorType::RGB);
-        pngencoder.set_depth(png::BitDepth::Eight);
-        let image_writer = pngencoder.write_header()?;
-        let mut w = image_writer.into_stream_writer();
-
-        println!("Writing image");
-        for ((red, green), blue) in red.into_iter().zip(green.into_iter()).zip(blue.into_iter()) {
-            w.write(&[*red, *green, *blue])?;
-        }
+        png::write_png(format!("{}/{}.png",parent_directory.to_string_lossy(), time_idx).as_str(), prim_image)?;
 
         // Add to Background Structure
-
         xml_background.images.push(xml::Image::Static {
             duration: 1 as f32,
             file: format!("{}/{}.png",parent_directory.to_string_lossy(), time_idx),
