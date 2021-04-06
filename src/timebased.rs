@@ -39,12 +39,9 @@ pub fn compute_time_based_wallpaper(
     };
 
     let number_of_images = image_ctx.number_of_top_level_images();
-    let mut image_ids = Vec::new();
-    image_ctx.top_level_image_ids(&mut image_ids);
-    for (time_idx, TimeSlice { time, idx }) in plist.time_slices.iter().enumerate() {
-        let img_id = *image_ids
-            .get(*idx)
-            .expect("Could not fetch image id described in metadata");
+    let image_ids = image_ctx.list_of_image_handle_ids(number_of_images);
+    for (time_idx, TimeSlice{time, idx}) in plist.time_slices.iter().enumerate() {
+        let img_id = *image_ids.get(*idx).expect("Could not fetch image id described in metadata");
         println!("Image ID: {:?}", img_id);
         let prim_image = image_ctx.image_handle(img_id).unwrap();
         png::write_png(

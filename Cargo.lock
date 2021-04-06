@@ -124,7 +124,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d7afe4a420e3fe79967a00898cc1f4db7c8a49a9333a29f8a4bd76a253d5cd04"
 
 [[package]]
-name = "heic-to-gnome-xml-wallpaper"
+name = "heic-to-gxml"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -164,9 +164,8 @@ checksum = "03b07a082330a35e43f63177cc01689da34fbffa0105e1246cf0311472cac73a"
 
 [[package]]
 name = "libheif-rs"
-version = "0.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "66472f304cacabc7c3b3afbebd139e2df7ca4a8598502aa9fe1244f10eaf6fbc"
+version = "0.13.2-alpha.0"
+source = "git+https://github.com/spraints/libheif-rs.git#e506ec919ae466e0452cb4e5ce7fb515229ab616"
 dependencies = [
  "enumn",
  "libheif-sys",
