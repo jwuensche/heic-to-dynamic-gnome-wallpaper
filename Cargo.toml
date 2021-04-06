@@ -1,5 +1,5 @@
 [package]
-name = "heic-to-gxml"
+name = "heic-to-gnome-xml-wallpaper"
 version = "0.1.0"
 authors = ["Johannes Wünsche <johannes@spacesnek.rocks>"]
 edition = "2018"
