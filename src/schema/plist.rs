@@ -26,8 +26,6 @@ pub struct TimeSlice {
 
 #[derive(Deserialize, Debug)]
 pub struct WallpaperMetaSun {
-    // TODO: Add Definition for Sun based Wallpapers
-    // The `TimeSlice` struct will have to be replaced here.
     #[serde(rename = "si")]
     pub solar_slices: Vec<SolarSlice>,
     #[serde(rename = "ap")]
