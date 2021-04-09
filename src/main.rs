@@ -63,7 +63,7 @@ fn main() -> Result<()> {
         metadata::WallPaperMode::H24(content) => {
             timebased::compute_time_based_wallpaper(image_ctx, content, &parent_directory)
         }
-        metadata::WallPaperMode::Solar(content) => {
+        metadata::WallPaperMode::Solar(_content) => {
             eprintln!("Solar is not supported at the moment, please use wallpapers only with time based changes.");
             std::process::exit(1)
         }

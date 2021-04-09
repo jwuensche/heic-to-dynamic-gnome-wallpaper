@@ -36,9 +36,8 @@ where
                 self.writer.write(b"\t</starttime>\n")?;
             }
         }
-        let mut biter = background.images.iter();
 
-        for entry in biter {
+        for entry in background.images.iter() {
             match entry {
                 Image::Static { duration, file, .. } => {
                     write!(self.writer, "\t<static>\n")?;
