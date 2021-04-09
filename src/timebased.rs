@@ -20,7 +20,7 @@ pub fn compute_time_based_wallpaper(
     parent_directory: &Path,
 ) -> Result<()> {
     let mut plist = metadata::get_time_plist_from_base64(&content)?;
-    println!("Found plist {:?}", plist);
+    //println!("Found plist {:?}", plist);
 
     plist
         .time_slices
@@ -42,7 +42,7 @@ pub fn compute_time_based_wallpaper(
     let image_ids = image_ctx.list_of_image_handle_ids(number_of_images);
     for (time_idx, TimeSlice{time, idx}) in plist.time_slices.iter().enumerate() {
         let img_id = *image_ids.get(*idx).expect("Could not fetch image id described in metadata");
-        println!("Image ID: {:?}", img_id);
+        //println!("Image ID: {:?}", img_id);
         let prim_image = image_ctx.image_handle(img_id).unwrap();
         png::write_png(
             format!("{}/{}.png", parent_directory.to_string_lossy(), time_idx).as_str(),

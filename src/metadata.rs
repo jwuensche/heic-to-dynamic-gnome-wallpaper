@@ -20,7 +20,7 @@ pub fn get_wallpaper_metadata(image_ctx: &HeifContext) -> Option<WallPaperMode> 
             .metadata(*metadata_id)
             .unwrap();
         let content = String::from_utf8_lossy(&foo);
-        println!("{:?}", content);
+        //println!("{:?}", content);
         let mut reader = Reader::from_str(&content);
         reader.trim_text(true);
 

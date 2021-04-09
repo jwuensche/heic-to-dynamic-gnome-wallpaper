@@ -28,7 +28,7 @@ pub fn write_png(path: &str, handle: ImageHandle) -> Result<()> {
     let image_writer = pngencoder.write_header()?;
     let mut w = image_writer.into_stream_writer();
 
-    println!("Writing image");
+    //println!("Writing image");
     for ((red, green), blue) in red.into_iter().zip(green.into_iter()).zip(blue.into_iter()) {
         w.write(&[*red, *green, *blue])?;
     }
