@@ -10,6 +10,8 @@ edition = "2018"
 anyhow = "1.0.39"
 base64 = "0.13.0"
 clap = "2.33.3"
+colored = "2.0.0"
+indicatif = "0.15.0"
 libheif-rs = { git = "https://github.com/spraints/libheif-rs.git" }
 plist = "1.1.0"
 png = "0.16.8"

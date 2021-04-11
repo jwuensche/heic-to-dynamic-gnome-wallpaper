@@ -1,5 +1,6 @@
 use anyhow::Result;
 use libheif_rs::HeifContext;
+use colored::*;
 
 use clap::{App, Arg};
 
@@ -52,6 +53,7 @@ fn main() -> Result<()> {
     let image_ctx = HeifContext::read_from_file(path).unwrap();
 
     // FETCH file wide metadata
+    println!("{}: {}", "Preparation".bright_blue(), "Fetch metadata from image");
     let base64plist = metadata::get_wallpaper_metadata(&image_ctx);
 
     if let None = base64plist {
@@ -59,11 +61,14 @@ fn main() -> Result<()> {
         return Err(anyhow::Error::msg("No valid metadata"));
     }
 
+    println!("{}: {}", "Preparation".bright_blue(), "Detecting wallpaper description kind");
     match base64plist.unwrap() {
         metadata::WallPaperMode::H24(content) => {
+            println!("{}: {}", "Preparation".bright_blue(), "Detected time-based wallpaper");
             timebased::compute_time_based_wallpaper(image_ctx, content, &parent_directory)
         }
         metadata::WallPaperMode::Solar(_content) => {
+            println!("{}: {}", "Preparation".bright_blue(), "Detected solar-based wallpaper");
             eprintln!("Solar is not supported at the moment, please use wallpapers only with time based changes.");
             std::process::exit(1)
         }

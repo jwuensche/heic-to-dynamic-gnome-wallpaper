@@ -11,6 +11,8 @@ use crate::serializer::GnomeXMLBackgroundSerializer;
 use crate::util::{png, time};
 use anyhow::Result;
 use libheif_rs::HeifContext;
+use indicatif::{ProgressIterator, ProgressBar, ProgressStyle};
+use colored::*;
 
 const DAY_SECS: f32 = 86400.0;
 
@@ -39,8 +41,13 @@ pub fn compute_time_based_wallpaper(
     };
 
     let number_of_images = image_ctx.number_of_top_level_images();
+    println!("{}: {} {} {}", "Preparation".bright_blue(), "Found", number_of_images, "images");
     let image_ids = image_ctx.list_of_image_handle_ids(number_of_images);
-    for (time_idx, TimeSlice{time, idx}) in plist.time_slices.iter().enumerate() {
+    println!("{}: {}", "Conversion".yellow(), "Converting embedded images to png format");
+    let pb = ProgressBar::new(number_of_images as u64).with_style(ProgressStyle::default_bar()
+    .template("Conversion: {wide_bar} {pos}/{len} [ETA: {eta_precise}]")
+    .progress_chars("## "));
+    for (time_idx, TimeSlice{time, idx}) in plist.time_slices.iter().enumerate().progress_with(pb) {
         let img_id = *image_ids.get(*idx).expect("Could not fetch image id described in metadata");
         //println!("Image ID: {:?}", img_id);
         let prim_image = image_ctx.image_handle(img_id).unwrap();
@@ -78,7 +85,9 @@ pub fn compute_time_based_wallpaper(
             idx: time_idx,
         });
     }
+    println!("{}: {}", "Conversion".yellow(), "Done!");
 
+    println!("{}: {}", "Conversion".green(), "Creating xml description for new wallpaper");
     xml_background.images.sort_by(|a, b| match (a, b) {
         (
             Static {
@@ -118,6 +127,7 @@ pub fn compute_time_based_wallpaper(
         ) => static_idx.cmp(&transition_idx),
     });
 
+    println!("{}: {}", "Conversion".green(), "Writing wallpaper description");
     let result_file = std::fs::OpenOptions::new()
         .write(true)
         .truncate(true)
@@ -129,5 +139,6 @@ pub fn compute_time_based_wallpaper(
     let mut result = BufWriter::new(result_file);
     let mut ser = GnomeXMLBackgroundSerializer::new(&mut result);
     ser.serialize(&xml_background)?;
+    println!("{}", "Done".green());
     Ok(())
 }
