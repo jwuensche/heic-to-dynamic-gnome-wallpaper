@@ -18,8 +18,18 @@ pub fn write_png(path: &str, handle: ImageHandle) -> Result<()> {
         let file = std::fs::OpenOptions::new()
             .create(true)
             .write(true)
+            .truncate(true)
             .open(path)?;
         let writer = BufWriter::new(file);
+
+        // In some cases data gets read which is not valid in itself, this is the case when the expected size of data (width * height) is superceded by the amount of data encoded in the planes
+        // This may have different reasons, being image blocks etc...
+        let actual = red.len() + green.len() + blue.len();
+        if red.len() != green.len() || green.len() != blue.len() {
+            return Err(anyhow::Error::msg("Length of color planes"))
+        }
+        let expected = width * height * 3;
+        let offset = (actual as u32 - expected) / 3 / height;
 
         let mut pngencoder = png::Encoder::new(writer, width, height);
         pngencoder.set_color(png::ColorType::RGB);
@@ -28,7 +38,11 @@ pub fn write_png(path: &str, handle: ImageHandle) -> Result<()> {
         let mut w = image_writer.into_stream_writer();
 
         //println!("Writing image");
-        for ((red, green), blue) in red.into_iter().zip(green.into_iter()).zip(blue.into_iter()) {
+        for (_, ((red, green), blue)) in red.into_iter()
+                                            .zip(green.into_iter())
+                                            .zip(blue.into_iter())
+                                            .enumerate()
+                                            .filter(|(id, _)| *id as u32 % width >= offset && *id as u32 / width != 0) {
             w.write(&[*red, *green, *blue])?;
         }
         return Ok(())
