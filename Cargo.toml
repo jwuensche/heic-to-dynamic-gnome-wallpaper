@@ -1,5 +1,5 @@
 [package]
-name = "heic-to-gnome-xml-wallpaper"
+name = "heic-to-dynamic-gnome-wallpaper"
 version = "0.1.0"
 authors = ["Johannes Wünsche <johannes@spacesnek.rocks>"]
 edition = "2018"
