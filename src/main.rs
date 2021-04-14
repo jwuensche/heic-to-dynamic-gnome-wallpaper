@@ -14,7 +14,7 @@ const INPUT: &str = "IMAGE";
 const DIR: &str = "DIR";
 
 fn main() -> Result<()> {
-    let matches = App::new("heic-to-gxml")
+    let matches = App::new("heic-to-gnome-xml-wallpaper")
         .arg(Arg::with_name(INPUT)
              .help("Image which should be transformed")
              .takes_value(true)
