@@ -26,7 +26,7 @@ pub fn write_png(path: &str, handle: ImageHandle) -> Result<()> {
         // This may have different reasons, being image blocks etc...
         let actual = red.len() + green.len() + blue.len();
         if red.len() != green.len() || green.len() != blue.len() {
-            return Err(anyhow::Error::msg("Length of color planes"))
+            return Err(anyhow::Error::msg("Length of color planes unequal"))
         }
         let expected = width * height * 3;
         let offset = (actual as u32 - expected) / 3 / height;
@@ -42,7 +42,7 @@ pub fn write_png(path: &str, handle: ImageHandle) -> Result<()> {
                                             .zip(green.into_iter())
                                             .zip(blue.into_iter())
                                             .enumerate()
-                                            .filter(|(id, _)| *id as u32 % width >= offset && *id as u32 / width != 0) {
+                                            .filter(|(id, _)| *id as u32 % (width + offset) < width) {
             w.write(&[*red, *green, *blue])?;
         }
         return Ok(())
