@@ -39,10 +39,9 @@ ARGS:
 You may either use the provided pre-built binary on this repository. Or build the project yourself on your local machine, you'll need a working rust toolchain in this case, check out the instructions [here](https://www.rust-lang.org/tools/install).
 
 ### Pre-built binaries
-> not yet provided, CI has to be set up
 ``` sh
 $ mkdir -p ~/.local/bin
-$ curl resource-link --output heic-to-dynamic-gnome-wallpaper
+$ curl https://github.com/jwuensche/heic-to-dynamic-gnome-wallpaper/releases/download/v0.1.1/heic-to-dynamic-gnome-wallpaper --output heic-to-dynamic-gnome-wallpaper
 $ chmod +x heic-to-dynamic-gnome-wallpaper
 $ ./heic-to-dynamic-gnome-wallpaper /path/to/some/image
 ```
