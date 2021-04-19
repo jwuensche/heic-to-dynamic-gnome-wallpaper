@@ -88,7 +88,7 @@ fn main() -> Result<()> {
                 "Preparation".bright_blue(),
                 "Detected solar-based wallpaper"
             );
-            solar::compute_solar_based_wallpaper(image_ctx, content, &&parent_directory)
+            solar::compute_solar_based_wallpaper(image_ctx, content, &parent_directory)
         }
     }
 }

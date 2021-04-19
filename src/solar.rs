@@ -1,4 +1,4 @@
-use crate::image::ImagePoint;
+use crate::image::{self, ImagePoint};
 use crate::schema::xml::{Background, StartTime};
 use crate::util::time;
 use crate::DAY_SECS;
@@ -73,5 +73,5 @@ pub fn compute_solar_based_wallpaper(
         };
         process_img(pt)?;
     }
-    crate::image::save_xml(&mut background_definition, parent_directory)
+    image::save_xml(&mut background_definition, parent_directory)
 }
