@@ -1,16 +1,16 @@
 use anyhow::Result;
-use libheif_rs::HeifContext;
 use colored::*;
+use libheif_rs::HeifContext;
 
 use clap::{App, Arg};
 
+mod image;
 mod metadata;
 mod schema;
 mod serializer;
-mod timebased;
 mod solar;
+mod timebased;
 mod util;
-mod image;
 
 const INPUT: &str = "IMAGE";
 const DIR: &str = "DIR";
@@ -56,7 +56,11 @@ fn main() -> Result<()> {
     let image_ctx = HeifContext::read_from_file(path).unwrap();
 
     // FETCH file wide metadata
-    println!("{}: {}", "Preparation".bright_blue(), "Fetch metadata from image");
+    println!(
+        "{}: {}",
+        "Preparation".bright_blue(),
+        "Fetch metadata from image"
+    );
     let base64plist = metadata::get_wallpaper_metadata(&image_ctx);
 
     if let None = base64plist {
@@ -64,14 +68,26 @@ fn main() -> Result<()> {
         return Err(anyhow::Error::msg("No valid metadata"));
     }
 
-    println!("{}: {}", "Preparation".bright_blue(), "Detecting wallpaper description kind");
+    println!(
+        "{}: {}",
+        "Preparation".bright_blue(),
+        "Detecting wallpaper description kind"
+    );
     match base64plist.unwrap() {
         metadata::WallPaperMode::H24(content) => {
-            println!("{}: {}", "Preparation".bright_blue(), "Detected time-based wallpaper");
+            println!(
+                "{}: {}",
+                "Preparation".bright_blue(),
+                "Detected time-based wallpaper"
+            );
             timebased::compute_time_based_wallpaper(image_ctx, content, &parent_directory)
         }
         metadata::WallPaperMode::Solar(content) => {
-            println!("{}: {}", "Preparation".bright_blue(), "Detected solar-based wallpaper");
+            println!(
+                "{}: {}",
+                "Preparation".bright_blue(),
+                "Detected solar-based wallpaper"
+            );
             solar::compute_solar_based_wallpaper(image_ctx, content, &&parent_directory)
         }
     }

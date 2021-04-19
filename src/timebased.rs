@@ -1,20 +1,16 @@
 use std::path::Path;
 
+use crate::image::{process_img, save_xml, ImagePoint};
 use crate::metadata;
 use crate::schema::plist::TimeSlice;
-use crate::schema::xml::{
-    Background,
-    StartTime,
-};
+use crate::schema::xml::{Background, StartTime};
 use crate::DAY_SECS;
-use crate::image::{ImagePoint, process_img, save_xml};
 
 use crate::util::time;
 use anyhow::Result;
-use libheif_rs::HeifContext;
-use indicatif::{ProgressIterator, ProgressBar, ProgressStyle};
 use colored::*;
-
+use indicatif::{ProgressBar, ProgressIterator, ProgressStyle};
+use libheif_rs::HeifContext;
 
 pub fn compute_time_based_wallpaper(
     image_ctx: HeifContext,
@@ -42,17 +38,33 @@ pub fn compute_time_based_wallpaper(
     };
 
     let number_of_images = image_ctx.number_of_top_level_images();
-    println!("{}: {} {} {}", "Preparation".bright_blue(), "Found", number_of_images, "images");
+    println!(
+        "{}: {} {} {}",
+        "Preparation".bright_blue(),
+        "Found",
+        number_of_images,
+        "images"
+    );
     let mut image_ids = vec![0u32; number_of_images];
     image_ctx.top_level_image_ids(&mut image_ids);
-    println!("{}: {}", "Conversion".yellow(), "Converting embedded images to png format");
-    let pb = ProgressBar::new(number_of_images as u64).with_style(ProgressStyle::default_bar()
-        .template("Conversion: {wide_bar} {pos}/{len} [ETA: {eta_precise}]")
-        .progress_chars("## "));
-    for (time_idx, TimeSlice{time, idx}) in plist.time_slices.iter().enumerate().progress_with(pb) {
-        let img_id = *image_ids.get(*idx).expect("Could not fetch image id described in metadata");
+    println!(
+        "{}: {}",
+        "Conversion".yellow(),
+        "Converting embedded images to png format"
+    );
+    let pb = ProgressBar::new(number_of_images as u64).with_style(
+        ProgressStyle::default_bar()
+            .template("Conversion: {wide_bar} {pos}/{len} [ETA: {eta_precise}]")
+            .progress_chars("## "),
+    );
+    for (time_idx, TimeSlice { time, idx }) in
+        plist.time_slices.iter().enumerate().progress_with(pb)
+    {
+        let img_id = *image_ids
+            .get(*idx)
+            .expect("Could not fetch image id described in metadata");
         //println!("Image ID: {:?}", img_id);
-        let pt = ImagePoint{
+        let pt = ImagePoint {
             image_ctx: &image_ctx,
             img_id,
             index: time_idx,
@@ -60,7 +72,11 @@ pub fn compute_time_based_wallpaper(
             parent_directory,
             start_time,
             time: *time,
-            next_time: plist.time_slices.get(time_idx + 1).map(|elem| elem.time).unwrap_or(0f32),
+            next_time: plist
+                .time_slices
+                .get(time_idx + 1)
+                .map(|elem| elem.time)
+                .unwrap_or(0f32),
         };
         process_img(pt)?;
     }

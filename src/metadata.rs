@@ -12,8 +12,13 @@ pub enum WallPaperMode {
 pub fn get_wallpaper_metadata(image_ctx: &HeifContext) -> Option<WallPaperMode> {
     // Fetch META information about all images (These are by standard stored in the first images meta information tags)
     let mut metadatas = vec![0; 1];
-    image_ctx.primary_image_handle().unwrap().metadata_block_ids("mime", &mut metadatas);
-    let metadata_id = metadatas.get(0).expect("Could not get metadata information");
+    image_ctx
+        .primary_image_handle()
+        .unwrap()
+        .metadata_block_ids("mime", &mut metadatas);
+    let metadata_id = metadatas
+        .get(0)
+        .expect("Could not get metadata information");
     let base64plist = {
         let foo = image_ctx
             .primary_image_handle()

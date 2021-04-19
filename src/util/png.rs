@@ -1,5 +1,5 @@
-use std::io::{BufWriter, Write};
 use colored::*;
+use std::io::{BufWriter, Write};
 
 use anyhow::Result;
 use libheif_rs::{ColorSpace, ImageHandle, RgbChroma};
@@ -26,7 +26,7 @@ pub fn write_png(path: &str, handle: ImageHandle) -> Result<()> {
         // This may have different reasons, being image blocks etc...
         let actual = red.len() + green.len() + blue.len();
         if red.len() != green.len() || green.len() != blue.len() {
-            return Err(anyhow::Error::msg("Length of color planes unequal"))
+            return Err(anyhow::Error::msg("Length of color planes unequal"));
         }
         let expected = width * height * 3;
         let offset = (actual as u32 - expected) / 3 / height;
@@ -38,15 +38,21 @@ pub fn write_png(path: &str, handle: ImageHandle) -> Result<()> {
         let mut w = image_writer.into_stream_writer();
 
         //println!("Writing image");
-        for (_, ((red, green), blue)) in red.into_iter()
-                                            .zip(green.into_iter())
-                                            .zip(blue.into_iter())
-                                            .enumerate()
-                                            .filter(|(id, _)| *id as u32 % (width + offset) < width) {
+        for (_, ((red, green), blue)) in red
+            .into_iter()
+            .zip(green.into_iter())
+            .zip(blue.into_iter())
+            .enumerate()
+            .filter(|(id, _)| *id as u32 % (width + offset) < width)
+        {
             w.write(&[*red, *green, *blue])?;
         }
-        return Ok(())
+        return Ok(());
     }
-    println!("{}: {}", "Error".red(), "Could not determine color space. Colorspace RGB C444 could not be applied");
+    println!(
+        "{}: {}",
+        "Error".red(),
+        "Could not determine color space. Colorspace RGB C444 could not be applied"
+    );
     Err(anyhow::Error::msg("Colorspace invalid"))
 }

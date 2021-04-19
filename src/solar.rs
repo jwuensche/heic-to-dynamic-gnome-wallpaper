@@ -1,13 +1,13 @@
-use std::path::Path;
-use crate::{image::process_img, metadata};
-use anyhow::Result;
-use libheif_rs::HeifContext;
-use std::cmp::Ordering;
 use crate::image::ImagePoint;
 use crate::schema::xml::{Background, StartTime};
 use crate::util::time;
 use crate::DAY_SECS;
-use indicatif::{ProgressIterator, ProgressBar, ProgressStyle};
+use crate::{image::process_img, metadata};
+use anyhow::Result;
+use indicatif::{ProgressBar, ProgressIterator, ProgressStyle};
+use libheif_rs::HeifContext;
+use std::cmp::Ordering;
+use std::path::Path;
 
 #[derive(Debug)]
 struct SolarToHourSlice {
@@ -15,7 +15,7 @@ struct SolarToHourSlice {
     index: usize,
 }
 
-const HOUR_PER_DEGREE:f32 = 24f32/360f32;
+const HOUR_PER_DEGREE: f32 = 24f32 / 360f32;
 
 pub fn compute_solar_based_wallpaper(
     image_ctx: HeifContext,
@@ -24,13 +24,17 @@ pub fn compute_solar_based_wallpaper(
 ) -> Result<()> {
     let mut plist = metadata::get_solar_plist_from_base64(&content)?;
 
-    plist.solar_slices.sort_by(|x, y| x.azimuth.partial_cmp(&y.azimuth).unwrap_or(Ordering::Equal));
-    let time_slices: Vec<SolarToHourSlice> = plist.solar_slices.iter().map(|elem|{
-        SolarToHourSlice {
+    plist
+        .solar_slices
+        .sort_by(|x, y| x.azimuth.partial_cmp(&y.azimuth).unwrap_or(Ordering::Equal));
+    let time_slices: Vec<SolarToHourSlice> = plist
+        .solar_slices
+        .iter()
+        .map(|elem| SolarToHourSlice {
             time: elem.azimuth / 360f32,
             index: elem.idx,
-        }
-    }).collect();
+        })
+        .collect();
     let mut img_ids = vec![0; image_ctx.number_of_top_level_images()];
     image_ctx.top_level_image_ids(&mut img_ids);
 
@@ -45,13 +49,16 @@ pub fn compute_solar_based_wallpaper(
             minute: time::to_rem_min(start_seconds),
             second: time::to_rem_sec(start_seconds),
         },
-        images: vec!(),
+        images: vec![],
     };
 
-    let pb = ProgressBar::new(image_ctx.number_of_top_level_images() as u64).with_style(ProgressStyle::default_bar()
-        .template("Conversion: {wide_bar} {pos}/{len} [ETA: {eta_precise}]")
-        .progress_chars("## "));
-    for (idx, SolarToHourSlice { time, index }) in time_slices.iter().enumerate().progress_with(pb) {
+    let pb = ProgressBar::new(image_ctx.number_of_top_level_images() as u64).with_style(
+        ProgressStyle::default_bar()
+            .template("Conversion: {wide_bar} {pos}/{len} [ETA: {eta_precise}]")
+            .progress_chars("## "),
+    );
+    for (idx, SolarToHourSlice { time, index }) in time_slices.iter().enumerate().progress_with(pb)
+    {
         let img_id = img_ids[*index];
         let pt = ImagePoint {
             image_ctx: &image_ctx,
@@ -61,7 +68,10 @@ pub fn compute_solar_based_wallpaper(
             parent_directory,
             start_time,
             time: *time,
-            next_time: time_slices.get(idx + 1).map(|elem| elem.time).unwrap_or(0f32),
+            next_time: time_slices
+                .get(idx + 1)
+                .map(|elem| elem.time)
+                .unwrap_or(0f32),
         };
         process_img(pt)?;
     }

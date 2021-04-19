@@ -1,12 +1,15 @@
 use std::path::Path;
 
-use libheif_rs::HeifContext;
-use anyhow::Result;
-use crate::util::png;
-use crate::schema::xml::{Background, Image::{Static, Transition}};
-use colored::*;
+use crate::schema::xml::{
+    Background,
+    Image::{Static, Transition},
+};
 use crate::serializer::GnomeXMLBackgroundSerializer;
+use crate::util::png;
 use crate::DAY_SECS;
+use anyhow::Result;
+use colored::*;
+use libheif_rs::HeifContext;
 use std::io::BufWriter;
 
 pub struct ImagePoint<'a> {
@@ -61,7 +64,11 @@ pub fn process_img(pt: ImagePoint) -> Result<()> {
 pub fn save_xml(xml: &mut Background, parent_directory: &Path) -> Result<()> {
     println!("{}: {}", "Conversion".yellow(), "Done!");
 
-    println!("{}: {}", "Conversion".green(), "Creating xml description for new wallpaper");
+    println!(
+        "{}: {}",
+        "Conversion".green(),
+        "Creating xml description for new wallpaper"
+    );
     xml.images.sort_by(|a, b| match (a, b) {
         (
             Static {
@@ -101,7 +108,11 @@ pub fn save_xml(xml: &mut Background, parent_directory: &Path) -> Result<()> {
         ) => static_idx.cmp(&transition_idx),
     });
 
-    println!("{}: {}", "Conversion".green(), "Writing wallpaper description");
+    println!(
+        "{}: {}",
+        "Conversion".green(),
+        "Writing wallpaper description"
+    );
     let result_file = std::fs::OpenOptions::new()
         .write(true)
         .truncate(true)
