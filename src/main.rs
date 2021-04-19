@@ -1,6 +1,7 @@
 use anyhow::Result;
 use colored::*;
 use libheif_rs::HeifContext;
+use std::path::Path;
 
 use clap::{App, Arg};
 
@@ -68,6 +69,8 @@ fn main() -> Result<()> {
         return Err(anyhow::Error::msg("No valid metadata"));
     }
 
+    let image_name = Path::new(path).file_stem().expect("Could not get file name of path").to_string_lossy();
+
     println!(
         "{}: {}",
         "Preparation".bright_blue(),
@@ -80,7 +83,7 @@ fn main() -> Result<()> {
                 "Preparation".bright_blue(),
                 "Detected time-based wallpaper"
             );
-            timebased::compute_time_based_wallpaper(image_ctx, content, &parent_directory)
+            timebased::compute_time_based_wallpaper(image_ctx, content, &parent_directory, &image_name)
         }
         metadata::WallPaperMode::Solar(content) => {
             println!(
@@ -88,7 +91,7 @@ fn main() -> Result<()> {
                 "Preparation".bright_blue(),
                 "Detected solar-based wallpaper"
             );
-            solar::compute_solar_based_wallpaper(image_ctx, content, &parent_directory)
+            solar::compute_solar_based_wallpaper(image_ctx, content, &parent_directory, &image_name)
         }
     }
 }

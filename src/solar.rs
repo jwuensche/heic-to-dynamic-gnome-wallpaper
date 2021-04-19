@@ -19,6 +19,7 @@ pub fn compute_solar_based_wallpaper(
     image_ctx: HeifContext,
     content: String,
     parent_directory: &Path,
+    image_name: &str,
 ) -> Result<()> {
     let mut plist = metadata::get_solar_plist_from_base64(&content)?;
 
@@ -73,5 +74,5 @@ pub fn compute_solar_based_wallpaper(
         };
         process_img(pt)?;
     }
-    image::save_xml(&mut background_definition, parent_directory)
+    image::save_xml(&mut background_definition, parent_directory, image_name)
 }

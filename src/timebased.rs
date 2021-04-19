@@ -16,6 +16,7 @@ pub fn compute_time_based_wallpaper(
     image_ctx: HeifContext,
     content: String,
     parent_directory: &Path,
+    image_name: &str,
 ) -> Result<()> {
     let mut plist = metadata::get_time_plist_from_base64(&content)?;
     //println!("Found plist {:?}", plist);
@@ -81,5 +82,5 @@ pub fn compute_time_based_wallpaper(
         process_img(pt)?;
     }
 
-    save_xml(&mut xml_background, parent_directory)
+    save_xml(&mut xml_background, parent_directory, image_name)
 }

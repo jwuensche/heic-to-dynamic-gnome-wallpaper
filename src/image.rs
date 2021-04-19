@@ -61,7 +61,7 @@ pub fn process_img(pt: ImagePoint) -> Result<()> {
     Ok(())
 }
 
-pub fn save_xml(xml: &mut Background, parent_directory: &Path) -> Result<()> {
+pub fn save_xml(xml: &mut Background, parent_directory: &Path, image_name: &str) -> Result<()> {
     println!("{}: {}", "Conversion".yellow(), "Done!");
 
     println!(
@@ -118,8 +118,9 @@ pub fn save_xml(xml: &mut Background, parent_directory: &Path) -> Result<()> {
         .truncate(true)
         .create(true)
         .open(format!(
-            "{}/default.xml",
-            parent_directory.to_string_lossy()
+            "{}/{}.xml",
+            parent_directory.to_string_lossy(),
+            image_name,
         ))?;
     let mut result = BufWriter::new(result_file);
     let mut ser = GnomeXMLBackgroundSerializer::new(&mut result);
