@@ -14,16 +14,18 @@ jobs:
       # ...
       - name: "Prepare"
         run: |
-          apt-get update
-          apt-get install -y curl libheif-dev gcc
+          sudo apt-get update
+          sudo apt-get install -y curl libheif-dev gcc git
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
           source $HOME/.cargo/env
           rustup target add x86_64-unknown-linux-musl
 
       - name: "Build"
         run: |
+          ls -la
+          git clone https://github.com/jwuensche/heic-to-dynamic-gnome-wallpaper.git
+          cd heic-to-dynamic-gnome-wallpaper
           cargo build --release --target x86_64-unknown-linux-musl
-          echo "done!"
 
       - name: "Release"
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -31,5 +33,5 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
           files: |
-            LICENSE.md
-            heic-to-dynamic-gnome-wallpaper
+            heic-to-dynamic-gnome-wallpaper/LICENSE.md
+            heic-to-dynamic-gnome-wallpaper/target/x86_64-unknown-linux-musl/release/heic-to-dynamic-gnome-wallpaper
