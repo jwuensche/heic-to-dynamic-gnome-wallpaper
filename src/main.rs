@@ -50,11 +50,11 @@ fn main() -> Result<()> {
         parent_directory = std::path::Path::new(path)
             .ancestors()
             .nth(1)
-            .unwrap()
+            .expect("Cannot get parent of given image path.")
             .canonicalize()
-            .unwrap();
+            .expect("Cannot get absolute path.");
     }
-    let image_ctx = HeifContext::read_from_file(path).unwrap();
+    let image_ctx = HeifContext::read_from_file(path).expect("Could not find image under path. No such file or directory.");
 
     // FETCH file wide metadata
     println!(
