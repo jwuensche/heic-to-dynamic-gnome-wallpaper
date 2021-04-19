@@ -1,0 +1,35 @@
+name: "release"
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  tagged-release:
+    name: "Tagged Release"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      # ...
+      - name: "Prepare"
+        run: |
+          apt-get update
+          apt-get install -y curl libheif-dev gcc
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+          source $HOME/.cargo/env
+          rustup target add x86_64-unknown-linux-musl
+
+      - name: "Build"
+        run: |
+          cargo build --release --target x86_64-unknown-linux-musl
+          echo "done!"
+
+      - name: "Release"
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: |
+            LICENSE.md
+            heic-to-dynamic-gnome-wallpaper
