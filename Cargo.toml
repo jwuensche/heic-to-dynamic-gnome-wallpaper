@@ -1,6 +1,6 @@
 [package]
 name = "heic-to-dynamic-gnome-wallpaper"
-version = "0.1.1-alpha.0"
+version = "0.1.1"
 authors = ["Johannes Wünsche <johannes@spacesnek.rocks>"]
 edition = "2018"
 description = "CLI tool to convert heic image containers used in MacOS's dynamic wallpapers to dynamic gnome xml wallpapers"
