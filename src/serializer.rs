@@ -25,25 +25,25 @@ where
                 minute,
                 second,
             } => {
-                self.writer.write(b"<background>\n")?;
-                self.writer.write(b"\t<starttime>\n")?;
-                write!(self.writer, "\t\t<year>{}</year>\n", year)?;
-                write!(self.writer, "\t\t<month>{}</month>\n", month)?;
-                write!(self.writer, "\t\t<day>{}</day>\n", day)?;
-                write!(self.writer, "\t\t<hour>{}</hour>\n", hour)?;
-                write!(self.writer, "\t\t<minute>{}</minute>\n", minute)?;
-                write!(self.writer, "\t\t<second>{}</second>\n", second)?;
-                self.writer.write(b"\t</starttime>\n")?;
+                writeln!(self.writer, "<background>")?;
+                writeln!(self.writer, "\t<starttime>")?;
+                writeln!(self.writer, "\t\t<year>{}</year>", year)?;
+                writeln!(self.writer, "\t\t<month>{}</month>", month)?;
+                writeln!(self.writer, "\t\t<day>{}</day>", day)?;
+                writeln!(self.writer, "\t\t<hour>{}</hour>", hour)?;
+                writeln!(self.writer, "\t\t<minute>{}</minute>", minute)?;
+                writeln!(self.writer, "\t\t<second>{}</second>", second)?;
+                writeln!(self.writer, "\t</starttime>")?;
             }
         }
 
         for entry in background.images.iter() {
             match entry {
                 Image::Static { duration, file, .. } => {
-                    write!(self.writer, "\t<static>\n")?;
-                    write!(self.writer, "\t\t<duration>{}</duration>\n", duration)?;
-                    write!(self.writer, "\t\t<file>{}</file>\n", file)?;
-                    write!(self.writer, "\t</static>\n")?;
+                    writeln!(self.writer, "\t<static>")?;
+                    writeln!(self.writer, "\t\t<duration>{}</duration>", duration)?;
+                    writeln!(self.writer, "\t\t<file>{}</file>", file)?;
+                    writeln!(self.writer, "\t</static>")?;
                 }
                 Image::Transition {
                     kind,
@@ -52,11 +52,11 @@ where
                     to,
                     ..
                 } => {
-                    write!(self.writer, "\t<transition type=\"{}\">\n", kind)?;
-                    write!(self.writer, "\t\t<duration>{}</duration>\n", duration)?;
-                    write!(self.writer, "\t\t<from>{}</from>\n", from)?;
-                    write!(self.writer, "\t\t<to>{}</to>\n", to)?;
-                    write!(self.writer, "\t</transition>\n")?;
+                    writeln!(self.writer, "\t<transition type=\"{}\">", kind)?;
+                    writeln!(self.writer, "\t\t<duration>{}</duration>", duration)?;
+                    writeln!(self.writer, "\t\t<from>{}</from>", from)?;
+                    writeln!(self.writer, "\t\t<to>{}</to>", to)?;
+                    writeln!(self.writer, "\t</transition>")?;
                 }
             }
         }

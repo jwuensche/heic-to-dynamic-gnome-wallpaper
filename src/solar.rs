@@ -15,8 +15,6 @@ struct SolarToHourSlice {
     index: usize,
 }
 
-const HOUR_PER_DEGREE: f32 = 24f32 / 360f32;
-
 pub fn compute_solar_based_wallpaper(
     image_ctx: HeifContext,
     content: String,

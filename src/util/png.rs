@@ -39,13 +39,13 @@ pub fn write_png(path: &str, handle: ImageHandle) -> Result<()> {
 
         //println!("Writing image");
         for (_, ((red, green), blue)) in red
-            .into_iter()
-            .zip(green.into_iter())
-            .zip(blue.into_iter())
+            .iter()
+            .zip(green.iter())
+            .zip(blue.iter())
             .enumerate()
             .filter(|(id, _)| *id as u32 % (width + offset) < width)
         {
-            w.write(&[*red, *green, *blue])?;
+            w.write_all(&[*red, *green, *blue])?;
         }
         return Ok(());
     }

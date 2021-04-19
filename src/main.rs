@@ -63,7 +63,7 @@ fn main() -> Result<()> {
     );
     let base64plist = metadata::get_wallpaper_metadata(&image_ctx);
 
-    if let None = base64plist {
+    if base64plist.is_none() {
         eprintln!("No valid metadata found describing wallpaper! Please check if the mime field is available and carries an apple_desktop:h24 and/or apple_desktop:solar value");
         return Err(anyhow::Error::msg("No valid metadata"));
     }
