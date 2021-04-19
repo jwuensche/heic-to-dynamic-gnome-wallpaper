@@ -2,7 +2,7 @@ use anyhow::Result;
 use libheif_rs::HeifContext;
 use quick_xml::{events::Event, Reader};
 
-use crate::schema::plist::WallpaperMetaTime;
+use crate::schema::plist::{WallpaperMetaSun, WallpaperMetaTime};
 
 pub enum WallPaperMode {
     H24(String),
@@ -64,6 +64,12 @@ pub fn get_wallpaper_metadata(image_ctx: &HeifContext) -> Option<WallPaperMode> 
 }
 
 pub fn get_time_plist_from_base64(input: &String) -> Result<WallpaperMetaTime> {
+    let decoded = base64::decode(input)?;
+    let plist = plist::from_bytes(&decoded)?;
+    Ok(plist)
+}
+
+pub fn get_solar_plist_from_base64(input: &String) -> Result<WallpaperMetaSun> {
     let decoded = base64::decode(input)?;
     let plist = plist::from_bytes(&decoded)?;
     Ok(plist)

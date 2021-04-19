@@ -8,10 +8,13 @@ mod metadata;
 mod schema;
 mod serializer;
 mod timebased;
+mod solar;
 mod util;
+mod image;
 
 const INPUT: &str = "IMAGE";
 const DIR: &str = "DIR";
+const DAY_SECS: f32 = 86400.0;
 
 fn main() -> Result<()> {
     let matches = App::new("heic-to-dynamic-gnome-wallpaper")
@@ -67,10 +70,9 @@ fn main() -> Result<()> {
             println!("{}: {}", "Preparation".bright_blue(), "Detected time-based wallpaper");
             timebased::compute_time_based_wallpaper(image_ctx, content, &parent_directory)
         }
-        metadata::WallPaperMode::Solar(_content) => {
+        metadata::WallPaperMode::Solar(content) => {
             println!("{}: {}", "Preparation".bright_blue(), "Detected solar-based wallpaper");
-            eprintln!("Solar is not supported at the moment, please use wallpapers only with time based changes.");
-            std::process::exit(1)
+            solar::compute_solar_based_wallpaper(image_ctx, content, &&parent_directory)
         }
     }
 }

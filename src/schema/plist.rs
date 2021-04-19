@@ -28,8 +28,8 @@ pub struct TimeSlice {
 pub struct WallpaperMetaSun {
     #[serde(rename = "si")]
     pub solar_slices: Vec<SolarSlice>,
-    #[serde(rename = "ap")]
-    pub appearance: Appearance,
+    // #[serde(rename = "ap")]
+    // pub appearance: Appearance,
 }
 
 #[derive(Deserialize, Debug)]
@@ -38,8 +38,8 @@ pub struct SolarSlice {
     pub altitude: f32,
     #[serde(rename = "i")]
     pub idx: usize,
-    #[serde(rename = "o")]
-    pub light_mode: usize,
+    // #[serde(rename = "o")]
+    // pub light_mode: usize,
     #[serde(rename = "z")]
     pub azimuth: f32,
 }
