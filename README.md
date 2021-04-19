@@ -2,6 +2,8 @@
 
 This project offers a cli to convert MacOS's dynamic wallpaper stored in `.heic` image containers to dynamic wallpaper definitions usable in GNOME.
 
+Both solar position and time based wallpaper definitions are supported. Although due to the nature of the gnome wallpapers, solar based wallpapers will be transferred to a time based division, approximated from the solar position defined for each image.
+
 ## 🧰 Usage
 
 Since most options are dictated by the image information, tweakable options are sparse. All you need to do is specify the path to the image you want to convert.  
@@ -31,8 +33,6 @@ ARGS:
             Image which should be transformed
 
 ```
-
-> At the moment only wallpapers with a time based display cycle are supported, the barebone for sun based timing is present but not yet implemented
 
 ## 📦 Installation
 
