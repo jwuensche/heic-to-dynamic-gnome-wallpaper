@@ -68,13 +68,13 @@ pub fn get_wallpaper_metadata(image_ctx: &HeifContext) -> Option<WallPaperMode> 
     return base64plist;
 }
 
-pub fn get_time_plist_from_base64(input: &String) -> Result<WallpaperMetaTime> {
+pub fn get_time_plist_from_base64(input: &str) -> Result<WallpaperMetaTime> {
     let decoded = base64::decode(input)?;
     let plist = plist::from_bytes(&decoded)?;
     Ok(plist)
 }
 
-pub fn get_solar_plist_from_base64(input: &String) -> Result<WallpaperMetaSun> {
+pub fn get_solar_plist_from_base64(input: &str) -> Result<WallpaperMetaSun> {
     let decoded = base64::decode(input)?;
     let plist = plist::from_bytes(&decoded)?;
     Ok(plist)
