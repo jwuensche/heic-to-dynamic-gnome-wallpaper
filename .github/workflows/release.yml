@@ -25,6 +25,7 @@ jobs:
           ls -la
           git clone https://github.com/jwuensche/heic-to-dynamic-gnome-wallpaper.git
           cd heic-to-dynamic-gnome-wallpaper
+          git checkout HEAD^
           cargo build --release --target x86_64-unknown-linux-musl
 
       - name: "Release"
