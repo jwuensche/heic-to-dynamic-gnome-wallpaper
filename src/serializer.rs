@@ -41,7 +41,7 @@ where
             match entry {
                 Image::Static { duration, file, .. } => {
                     writeln!(self.writer, "\t<static>")?;
-                    writeln!(self.writer, "\t\t<duration>{}</duration>", duration)?;
+                    writeln!(self.writer, "\t\t<duration>{}</duration>", *duration as u32)?;
                     writeln!(self.writer, "\t\t<file>{}</file>", file)?;
                     writeln!(self.writer, "\t</static>")?;
                 }
@@ -53,7 +53,7 @@ where
                     ..
                 } => {
                     writeln!(self.writer, "\t<transition type=\"{}\">", kind)?;
-                    writeln!(self.writer, "\t\t<duration>{}</duration>", duration)?;
+                    writeln!(self.writer, "\t\t<duration>{}</duration>", *duration as u32)?;
                     writeln!(self.writer, "\t\t<from>{}</from>", from)?;
                     writeln!(self.writer, "\t\t<to>{}</to>", to)?;
                     writeln!(self.writer, "\t</transition>")?;
