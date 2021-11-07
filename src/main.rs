@@ -54,7 +54,8 @@ fn main() -> Result<()> {
             .canonicalize()
             .expect("Cannot get absolute path.");
     }
-    let image_ctx = HeifContext::read_from_file(path).expect("Could not find image under path. No such file or directory.");
+    let image_ctx = HeifContext::read_from_file(path)
+        .expect("Could not find image under path. No such file or directory.");
 
     // FETCH file wide metadata
     println!(
@@ -69,7 +70,10 @@ fn main() -> Result<()> {
         return Err(anyhow::Error::msg("No valid metadata"));
     }
 
-    let image_name = Path::new(path).file_stem().expect("Could not get file name of path").to_string_lossy();
+    let image_name = Path::new(path)
+        .file_stem()
+        .expect("Could not get file name of path")
+        .to_string_lossy();
 
     println!(
         "{}: {}",
@@ -83,7 +87,12 @@ fn main() -> Result<()> {
                 "Preparation".bright_blue(),
                 "Detected time-based wallpaper"
             );
-            timebased::compute_time_based_wallpaper(image_ctx, content, &parent_directory, &image_name)
+            timebased::compute_time_based_wallpaper(
+                image_ctx,
+                content,
+                &parent_directory,
+                &image_name,
+            )
         }
         metadata::WallPaperMode::Solar(content) => {
             println!(

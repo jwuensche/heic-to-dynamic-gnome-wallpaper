@@ -82,5 +82,31 @@ pub fn compute_time_based_wallpaper(
         process_img(pt)?;
     }
 
+    // Valify time range
+    let total_time = xml_background
+        .images
+        .iter()
+        .fold(0f32, |acc, image| match image {
+            crate::schema::xml::Image::Static { duration, .. } => acc + duration,
+            crate::schema::xml::Image::Transition { duration, .. } => acc + duration,
+        });
+
+    if total_time < DAY_SECS as f32 {
+        if let Some(img) = xml_background.images.last_mut() {
+            match img {
+                crate::schema::xml::Image::Static {
+                    ref mut duration, ..
+                } => {
+                    *duration = (*duration + (DAY_SECS as f32 - total_time)).ceil();
+                }
+                crate::schema::xml::Image::Transition {
+                    ref mut duration, ..
+                } => {
+                    *duration = (*duration + (DAY_SECS as f32 - total_time)).ceil();
+                }
+            }
+        }
+    }
+
     save_xml(&mut xml_background, parent_directory, image_name)
 }
