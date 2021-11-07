@@ -47,15 +47,29 @@ fn main() -> Result<()> {
         }
         parent_directory = nu_path.canonicalize()?;
     } else {
-        parent_directory = std::path::Path::new(path)
+        let p = std::path::Path::new(path)
             .ancestors()
-            .nth(1)
-            .expect("Cannot get parent of given image path.")
-            .canonicalize()
-            .expect("Cannot get absolute path.");
+            .nth(1);
+
+        if p.is_none() {
+            return Err(anyhow::Error::msg("Cannot get parent of given image path."));
+        }
+        let pd = p.unwrap()
+            .canonicalize();
+
+        if let Err(e) = pd {
+            let msg =  format!("Cannot get absolute path: {}", e);
+            return Err(anyhow::Error::msg(msg));
+        }
+        parent_directory = pd.unwrap();
     }
-    let image_ctx = HeifContext::read_from_file(path)
-        .expect("Could not find image under path. No such file or directory.");
+    let image_ctx_opt = HeifContext::read_from_file(path);
+
+    if let Err(e) = image_ctx_opt {
+        let msg = format!("{}", e.message);
+        return Err(anyhow::Error::msg(msg))
+    }
+    let image_ctx = image_ctx_opt.unwrap();
 
     // FETCH file wide metadata
     println!(
@@ -66,8 +80,7 @@ fn main() -> Result<()> {
     let base64plist = metadata::get_wallpaper_metadata(&image_ctx);
 
     if base64plist.is_none() {
-        eprintln!("No valid metadata found describing wallpaper! Please check if the mime field is available and carries an apple_desktop:h24 and/or apple_desktop:solar value");
-        return Err(anyhow::Error::msg("No valid metadata"));
+        return Err(anyhow::Error::msg("No valid metadata found describing wallpaper! Please check if the mime field is available and carries an apple_desktop:h24 and/or apple_desktop:solar value"));
     }
 
     let image_name = Path::new(path)
