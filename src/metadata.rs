@@ -20,12 +20,12 @@ pub fn get_wallpaper_metadata(image_ctx: &HeifContext) -> Option<WallPaperMode> 
         .get(0)
         .expect("Could not get metadata information");
     let base64plist = {
-        let foo = image_ctx
+        let tmp = image_ctx
             .primary_image_handle()
             .unwrap()
             .metadata(*metadata_id)
             .unwrap();
-        let content = String::from_utf8_lossy(&foo);
+        let content = String::from_utf8_lossy(&tmp);
         //println!("{:?}", content);
         let mut reader = Reader::from_str(&content);
         reader.trim_text(true);
@@ -65,7 +65,7 @@ pub fn get_wallpaper_metadata(image_ctx: &HeifContext) -> Option<WallPaperMode> 
         }
         h24
     };
-    return base64plist;
+    base64plist
 }
 
 pub fn get_time_plist_from_base64(input: &str) -> Result<WallpaperMetaTime> {

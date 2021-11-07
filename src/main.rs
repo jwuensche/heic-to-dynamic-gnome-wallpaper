@@ -37,7 +37,7 @@ fn main() -> Result<()> {
         .get_matches();
     let path = matches
         .value_of(INPUT)
-        .ok_or(anyhow::Error::msg("Could not read INPUT"))?;
+        .ok_or_else(|| anyhow::Error::msg("Could not read INPUT"))?;
 
     let parent_directory;
     if matches.is_present(DIR) {
@@ -47,35 +47,18 @@ fn main() -> Result<()> {
         }
         parent_directory = nu_path.canonicalize()?;
     } else {
-        let p = std::path::Path::new(path)
+        parent_directory = std::path::Path::new(path)
             .ancestors()
-            .nth(1);
-
-        if p.is_none() {
-            return Err(anyhow::Error::msg("Cannot get parent of given image path."));
-        }
-        let pd = p.unwrap()
-            .canonicalize();
-
-        if let Err(e) = pd {
-            let msg =  format!("Cannot get absolute path: {}", e);
-            return Err(anyhow::Error::msg(msg));
-        }
-        parent_directory = pd.unwrap();
+            .nth(1)
+            .ok_or_else(|| anyhow::Error::msg("Cannot get parent of given image path."))?
+            .canonicalize()?;
     }
-    let image_ctx_opt = HeifContext::read_from_file(path);
-
-    if let Err(e) = image_ctx_opt {
-        let msg = format!("{}", e.message);
-        return Err(anyhow::Error::msg(msg))
-    }
-    let image_ctx = image_ctx_opt.unwrap();
+    let image_ctx = HeifContext::read_from_file(path)?;
 
     // FETCH file wide metadata
     println!(
-        "{}: {}",
+        "{}: Fetch metadata from image",
         "Preparation".bright_blue(),
-        "Fetch metadata from image"
     );
     let base64plist = metadata::get_wallpaper_metadata(&image_ctx);
 
@@ -89,16 +72,14 @@ fn main() -> Result<()> {
         .to_string_lossy();
 
     println!(
-        "{}: {}",
+        "{}: Detecting wallpaper description kind",
         "Preparation".bright_blue(),
-        "Detecting wallpaper description kind"
     );
     match base64plist.unwrap() {
         metadata::WallPaperMode::H24(content) => {
             println!(
-                "{}: {}",
+                "{}: Detected time-based wallpaper",
                 "Preparation".bright_blue(),
-                "Detected time-based wallpaper"
             );
             timebased::compute_time_based_wallpaper(
                 image_ctx,
@@ -109,9 +90,8 @@ fn main() -> Result<()> {
         }
         metadata::WallPaperMode::Solar(content) => {
             println!(
-                "{}: {}",
+                "{}: Detected solar-based wallpaper",
                 "Preparation".bright_blue(),
-                "Detected solar-based wallpaper"
             );
             solar::compute_solar_based_wallpaper(image_ctx, content, &parent_directory, &image_name)
         }

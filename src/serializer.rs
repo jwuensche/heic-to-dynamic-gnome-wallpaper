@@ -16,26 +16,23 @@ where
 
     pub fn serialize(&mut self, background: &Background) -> Result<()> {
         // By definition we can only find one starttime
-        match background.starttime {
-            StartTime {
+        let StartTime {
                 year,
                 month,
                 day,
                 hour,
                 minute,
                 second,
-            } => {
-                writeln!(self.writer, "<background>")?;
-                writeln!(self.writer, "\t<starttime>")?;
-                writeln!(self.writer, "\t\t<year>{}</year>", year)?;
-                writeln!(self.writer, "\t\t<month>{}</month>", month)?;
-                writeln!(self.writer, "\t\t<day>{}</day>", day)?;
-                writeln!(self.writer, "\t\t<hour>{}</hour>", hour)?;
-                writeln!(self.writer, "\t\t<minute>{}</minute>", minute)?;
-                writeln!(self.writer, "\t\t<second>{}</second>", second)?;
-                writeln!(self.writer, "\t</starttime>")?;
-            }
-        }
+        } = background.starttime;
+        writeln!(self.writer, "<background>")?;
+        writeln!(self.writer, "\t<starttime>")?;
+        writeln!(self.writer, "\t\t<year>{}</year>", year)?;
+        writeln!(self.writer, "\t\t<month>{}</month>", month)?;
+        writeln!(self.writer, "\t\t<day>{}</day>", day)?;
+        writeln!(self.writer, "\t\t<hour>{}</hour>", hour)?;
+        writeln!(self.writer, "\t\t<minute>{}</minute>", minute)?;
+        writeln!(self.writer, "\t\t<second>{}</second>", second)?;
+        writeln!(self.writer, "\t</starttime>")?;
 
         for entry in background.images.iter() {
             match entry {

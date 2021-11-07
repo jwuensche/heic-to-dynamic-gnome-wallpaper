@@ -33,7 +33,7 @@ pub fn process_img(pt: ImagePoint) -> Result<()> {
 
     // Add to Background Structure
     pt.background.images.push(Static {
-        duration: 1 as f32,
+        duration: 1f32,
         file: format!("{}/{}.png", pt.parent_directory.to_string_lossy(), pt.index),
         idx: pt.index,
     });
@@ -62,12 +62,11 @@ pub fn process_img(pt: ImagePoint) -> Result<()> {
 }
 
 pub fn save_xml(xml: &mut Background, parent_directory: &Path, image_name: &str) -> Result<()> {
-    println!("{}: {}", "Conversion".yellow(), "Done!");
+    println!("{}: Done!", "Conversion".yellow());
 
     println!(
-        "{}: {}",
+        "{}: Creating xml description for new wallpaper",
         "Conversion".green(),
-        "Creating xml description for new wallpaper"
     );
     xml.images.sort_by(|a, b| match (a, b) {
         (
@@ -78,7 +77,7 @@ pub fn save_xml(xml: &mut Background, parent_directory: &Path, image_name: &str)
                 idx: transition_idx,
                 ..
             },
-        ) => static_idx.cmp(&transition_idx),
+        ) => static_idx.cmp(transition_idx),
         (
             Static {
                 idx: static_idx, ..
@@ -87,7 +86,7 @@ pub fn save_xml(xml: &mut Background, parent_directory: &Path, image_name: &str)
                 idx: transition_idx,
                 ..
             },
-        ) => static_idx.cmp(&transition_idx),
+        ) => static_idx.cmp(transition_idx),
         (
             Transition {
                 idx: static_idx, ..
@@ -96,7 +95,7 @@ pub fn save_xml(xml: &mut Background, parent_directory: &Path, image_name: &str)
                 idx: transition_idx,
                 ..
             },
-        ) => static_idx.cmp(&transition_idx),
+        ) => static_idx.cmp(transition_idx),
         (
             Transition {
                 idx: static_idx, ..
@@ -105,13 +104,12 @@ pub fn save_xml(xml: &mut Background, parent_directory: &Path, image_name: &str)
                 idx: transition_idx,
                 ..
             },
-        ) => static_idx.cmp(&transition_idx),
+        ) => static_idx.cmp(transition_idx),
     });
 
     println!(
-        "{}: {}",
+        "{}: Writing wallpaper description",
         "Conversion".green(),
-        "Writing wallpaper description"
     );
     let result_file = std::fs::OpenOptions::new()
         .write(true)
@@ -124,7 +122,7 @@ pub fn save_xml(xml: &mut Background, parent_directory: &Path, image_name: &str)
         ))?;
     let mut result = BufWriter::new(result_file);
     let mut ser = GnomeXMLBackgroundSerializer::new(&mut result);
-    ser.serialize(&xml)?;
+    ser.serialize(xml)?;
     println!("{}", "Done".green());
     Ok(())
 }

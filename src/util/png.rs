@@ -50,9 +50,8 @@ pub fn write_png(path: &str, handle: ImageHandle) -> Result<()> {
         return Ok(());
     }
     println!(
-        "{}: {}",
+        "{}: Could not determine color space. Colorspace RGB C444 could not be applied",
         "Error".red(),
-        "Could not determine color space. Colorspace RGB C444 could not be applied"
     );
     Err(anyhow::Error::msg("Colorspace invalid"))
 }
