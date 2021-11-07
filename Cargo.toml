@@ -15,6 +15,7 @@ license = "GPL-3.0-only"
 [dependencies]
 anyhow = "1.0.39"
 base64 = "0.13.0"
+chrono = "0.4.19"
 clap = "2.33.3"
 colored = "2.0.0"
 indicatif = "0.15.0"

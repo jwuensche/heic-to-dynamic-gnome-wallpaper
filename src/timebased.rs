@@ -8,6 +8,7 @@ use crate::DAY_SECS;
 
 use crate::util::time;
 use anyhow::Result;
+use chrono::Datelike;
 use colored::*;
 use indicatif::{ProgressBar, ProgressIterator, ProgressStyle};
 use libheif_rs::HeifContext;
@@ -26,12 +27,13 @@ pub fn compute_time_based_wallpaper(
         .sort_by(|a, b| a.time.partial_cmp(&b.time).unwrap());
     let start_time = plist.time_slices.get(0).unwrap().time;
     let start_seconds = (start_time * DAY_SECS) as u16;
+    let date = chrono::Local::now();
     let mut xml_background = Background {
         images: Vec::new(),
         starttime: StartTime {
-            year: 2011,
-            month: 10,
-            day: 1,
+            year: date.year(),
+            month: date.month(),
+            day: date.day(),
             hour: time::to_rem_hours(start_seconds),
             minute: time::to_rem_min(start_seconds),
             second: time::to_rem_sec(start_seconds),

@@ -6,9 +6,9 @@ pub struct Background {
 
 #[derive(Debug)]
 pub struct StartTime {
-    pub year: u16,
-    pub month: u16,
-    pub day: u16,
+    pub year: i32,
+    pub month: u32,
+    pub day: u32,
     pub hour: u16,
     pub minute: u16,
     pub second: u16,

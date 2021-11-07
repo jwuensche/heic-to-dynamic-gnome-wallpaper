@@ -4,6 +4,7 @@ use crate::util::time;
 use crate::DAY_SECS;
 use crate::{image::process_img, metadata};
 use anyhow::Result;
+use chrono::Datelike;
 use indicatif::{ProgressBar, ProgressIterator, ProgressStyle};
 use libheif_rs::HeifContext;
 use std::cmp::Ordering;
@@ -39,11 +40,12 @@ pub fn compute_solar_based_wallpaper(
 
     let start_time = time_slices.get(0).expect("No image has been found").time;
     let start_seconds = (start_time * DAY_SECS) as u16;
+    let date = chrono::Local::now();
     let mut background_definition = Background {
         starttime: StartTime {
-            year: 2011,
-            month: 10,
-            day: 1,
+            year: date.year(),
+            month: date.month(),
+            day: date.day(),
             hour: time::to_rem_hours(start_seconds),
             minute: time::to_rem_min(start_seconds),
             second: time::to_rem_sec(start_seconds),
