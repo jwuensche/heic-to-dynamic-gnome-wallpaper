@@ -48,10 +48,12 @@ fn main() -> Result<()> {
         parent_directory = nu_path.canonicalize()?;
     } else {
         parent_directory = std::path::Path::new(path)
+            .canonicalize()
+            .map_err(|e| anyhow::Error::msg(format!("Cannot get parent of given image path. {}", e)))?
             .ancestors()
             .nth(1)
             .ok_or_else(|| anyhow::Error::msg("Cannot get parent of given image path."))?
-            .canonicalize()?;
+            .to_path_buf();
     }
     let image_ctx = HeifContext::read_from_file(path)?;
 
