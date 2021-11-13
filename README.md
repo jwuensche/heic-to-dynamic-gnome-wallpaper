@@ -38,6 +38,13 @@ ARGS:
 
 You'll need a working rust toolchain to install this tool at the moment, check out the instructions [here](https://www.rust-lang.org/tools/install) on how to setup one.
 
+Additionally, you need the following libraries often shipped as:
+```
+libheif
+libheif-dev
+```
+
+
 ### Local via `cargo install`
 
 ``` sh
