@@ -44,6 +44,11 @@ libheif
 libheif-dev
 ```
 
+<details>
+  <summary>For openSUSE users</summary>
+  Due to <a href="https://en.opensuse.org/openSUSE:Build_Service_application_blacklist#Software_which_is_encumbered_by_patent_claims">legal reasons</a> the <code>libheif</code> package in the default repositories does not come with the h265 codec required to decode <code>.heic</code> images.
+  The community maintained <code>packman</code> repository can be used here. Check out the <a href="https://en.opensuse.org/Additional_package_repositories#Packman">openSUSE Wiki</a> to see how to use their packages.
+</details>
 
 ### Local via `cargo install`
 
@@ -60,3 +65,4 @@ $ cargo install --path .
 $ # OR
 $ cargo build --release
 ```
+
