@@ -49,7 +49,7 @@ fn main() -> Result<()> {
     } else {
         parent_directory = std::path::Path::new(path)
             .canonicalize()
-            .map_err(|e| anyhow::Error::msg(format!("Cannot get parent of given image path. {}", e)))?
+            .map_err(|e| anyhow::Error::msg(format!("Cannot get absolute path of the given file: {}", e)))?
             .ancestors()
             .nth(1)
             .ok_or_else(|| anyhow::Error::msg("Cannot get parent of given image path."))?
@@ -58,10 +58,7 @@ fn main() -> Result<()> {
     let image_ctx = HeifContext::read_from_file(path)?;
 
     // FETCH file wide metadata
-    println!(
-        "{}: Fetch metadata from image",
-        "Preparation".bright_blue(),
-    );
+    println!("{}: Fetch metadata from image", "Preparation".bright_blue(),);
     let base64plist = metadata::get_wallpaper_metadata(&image_ctx);
 
     if base64plist.is_none() {

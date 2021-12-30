@@ -107,10 +107,7 @@ pub fn save_xml(xml: &mut Background, parent_directory: &Path, image_name: &str)
         ) => static_idx.cmp(transition_idx),
     });
 
-    println!(
-        "{}: Writing wallpaper description",
-        "Conversion".green(),
-    );
+    println!("{}: Writing wallpaper description", "Conversion".green(),);
     let result_file = std::fs::OpenOptions::new()
         .write(true)
         .truncate(true)

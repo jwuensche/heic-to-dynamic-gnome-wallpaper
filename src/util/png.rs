@@ -8,7 +8,8 @@ pub fn write_png(path: &str, handle: ImageHandle) -> Result<()> {
     let width = handle.width();
     let height = handle.height();
     //let decoded = handle.decode(ColorSpace::YCbCr(libheif_rs::Chroma::C444), false).unwrap();
-    if let Ok(decoded) = handle.decode(ColorSpace::Rgb(RgbChroma::C444), false) {
+    let res = handle.decode(ColorSpace::Rgb(RgbChroma::C444), false);
+    if let Ok(decoded) = res {
         let planes = decoded.planes();
 
         let red = planes.r.unwrap().data;
@@ -26,7 +27,7 @@ pub fn write_png(path: &str, handle: ImageHandle) -> Result<()> {
         // This may have different reasons, being image blocks etc...
         let actual = red.len() + green.len() + blue.len();
         if red.len() != green.len() || green.len() != blue.len() {
-            return Err(anyhow::Error::msg("Length of color planes unequal"));
+            return Err(anyhow::Error::msg("Length of color planes are unequal. The image data is probably invalid, please check the used image in another application."));
         }
         let expected = width * height * 3;
         let offset = (actual as u32 - expected) / 3 / height;
@@ -53,5 +54,8 @@ pub fn write_png(path: &str, handle: ImageHandle) -> Result<()> {
         "{}: Could not determine color space. Colorspace RGB C444 could not be applied",
         "Error".red(),
     );
-    Err(anyhow::Error::msg("Colorspace invalid"))
+    Err(anyhow::Error::msg(format!(
+        "Could not decode the image data in RGB C444 colorspace: {:?}",
+        res.err().unwrap()
+    )))
 }

@@ -17,12 +17,12 @@ where
     pub fn serialize(&mut self, background: &Background) -> Result<()> {
         // By definition we can only find one starttime
         let StartTime {
-                year,
-                month,
-                day,
-                hour,
-                minute,
-                second,
+            year,
+            month,
+            day,
+            hour,
+            minute,
+            second,
         } = background.starttime;
         writeln!(self.writer, "<background>")?;
         writeln!(self.writer, "\t<starttime>")?;
