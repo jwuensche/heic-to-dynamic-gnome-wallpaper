@@ -54,6 +54,10 @@ pub fn compute_solar_based_wallpaper(
         images: vec![],
     };
 
+    println!(
+        "{}: Converting embedded images to png format...",
+        "Conversion".green(),
+    );
     println!("{}:", "Conversion".green());
     let pb = ProgressBar::new(image_ctx.number_of_top_level_images() as u64).with_style(
         ProgressStyle::default_bar()

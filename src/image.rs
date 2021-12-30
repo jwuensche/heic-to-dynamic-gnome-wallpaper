@@ -62,10 +62,8 @@ pub fn process_img(pt: ImagePoint) -> Result<()> {
 }
 
 pub fn save_xml(xml: &mut Background, parent_directory: &Path, image_name: &str) -> Result<()> {
-    println!("{}: Done!", "Conversion".yellow());
-
     println!(
-        "{}: Creating xml description for new wallpaper",
+        "{}: Creating xml description for new wallpaper...",
         "Conversion".green(),
     );
     xml.images.sort_by(|a, b| match (a, b) {
@@ -107,7 +105,7 @@ pub fn save_xml(xml: &mut Background, parent_directory: &Path, image_name: &str)
         ) => static_idx.cmp(transition_idx),
     });
 
-    println!("{}: Writing wallpaper description", "Conversion".green(),);
+    println!("{}: Writing wallpaper description...", "Conversion".green(),);
     let result_file = std::fs::OpenOptions::new()
         .write(true)
         .truncate(true)
@@ -120,6 +118,6 @@ pub fn save_xml(xml: &mut Background, parent_directory: &Path, image_name: &str)
     let mut result = BufWriter::new(result_file);
     let mut ser = GnomeXMLBackgroundSerializer::new(&mut result);
     ser.serialize(xml)?;
-    println!("{}", "Done".green());
+    println!("{}: {}", "Conversion".green(), "Done!".green());
     Ok(())
 }

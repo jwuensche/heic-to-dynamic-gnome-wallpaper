@@ -50,7 +50,7 @@ pub fn compute_time_based_wallpaper(
     image_ctx.top_level_image_ids(&mut image_ids);
     println!(
         "{}: Converting embedded images to png format",
-        "Conversion".yellow(),
+        "Conversion".green(),
     );
     println!("{}:", "Conversion".green());
     let pb = ProgressBar::new(number_of_images as u64).with_style(

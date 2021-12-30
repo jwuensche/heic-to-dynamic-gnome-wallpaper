@@ -52,13 +52,13 @@ fn main() -> Result<()> {
             .map_err(|e| anyhow::Error::msg(format!("Cannot get absolute path of the given file: {}", e)))?
             .ancestors()
             .nth(1)
-            .ok_or_else(|| anyhow::Error::msg("Cannot get parent of given image path."))?
+            .ok_or_else(|| anyhow::Error::msg(format!("Cannot get parent of given image path: \"{}\"", path)))?
             .to_path_buf();
     }
     let image_ctx = HeifContext::read_from_file(path)?;
 
     // FETCH file wide metadata
-    println!("{}: Fetch metadata from image", "Preparation".bright_blue(),);
+    println!("{}: Fetch metadata from image...", "Preparation".bright_blue(),);
     let base64plist = metadata::get_wallpaper_metadata(&image_ctx);
 
     if base64plist.is_none() {
@@ -71,13 +71,13 @@ fn main() -> Result<()> {
         .to_string_lossy();
 
     println!(
-        "{}: Detecting wallpaper description kind",
+        "{}: Detecting wallpaper description type...",
         "Preparation".bright_blue(),
     );
     match base64plist.unwrap() {
         metadata::WallPaperMode::H24(content) => {
             println!(
-                "{}: Detected time-based wallpaper",
+                "{}: Detected time-based wallpaper.",
                 "Preparation".bright_blue(),
             );
             timebased::compute_time_based_wallpaper(
@@ -89,7 +89,7 @@ fn main() -> Result<()> {
         }
         metadata::WallPaperMode::Solar(content) => {
             println!(
-                "{}: Detected solar-based wallpaper",
+                "{}: Detected solar-based wallpaper.",
                 "Preparation".bright_blue(),
             );
             solar::compute_solar_based_wallpaper(image_ctx, content, &parent_directory, &image_name)
