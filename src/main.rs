@@ -38,15 +38,14 @@ fn main() -> Result<()> {
         .value_of(INPUT)
         .ok_or_else(|| anyhow::Error::msg("Could not read INPUT"))?;
 
-    let parent_directory;
-    if matches.is_present(DIR) {
+    let parent_directory = if matches.is_present(DIR) {
         let nu_path = std::path::Path::new(matches.value_of(DIR).unwrap()).to_path_buf();
         if !nu_path.exists() {
             std::fs::create_dir_all(&nu_path)?
         }
-        parent_directory = nu_path.canonicalize()?;
+        nu_path.canonicalize()?
     } else {
-        parent_directory = std::path::Path::new(path)
+        std::path::Path::new(path)
             .canonicalize()
             .map_err(|e| {
                 anyhow::Error::msg(format!("Cannot get absolute path of the given file: {}", e))
@@ -59,8 +58,8 @@ fn main() -> Result<()> {
                     path
                 ))
             })?
-            .to_path_buf();
-    }
+            .to_path_buf()
+    };
     let image_ctx = HeifContext::read_from_file(path)?;
 
     // FETCH file wide metadata

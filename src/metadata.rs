@@ -44,13 +44,13 @@ pub fn get_wallpaper_metadata(image_ctx: &HeifContext) -> Option<WallPaperMode> 
                         .for_each(|att| match att.as_ref().unwrap().key {
                             s if s == "apple_desktop:h24".as_bytes() => {
                                 h24 = Some(WallPaperMode::H24(
-                                    String::from_utf8_lossy(&att.unwrap().value.into_owned())
+                                    String::from_utf8_lossy(&att.unwrap().value)
                                         .to_string(),
                                 ))
                             }
                             s if s == "apple_desktop:solar".as_bytes() => {
                                 h24 = Some(WallPaperMode::Solar(
-                                    String::from_utf8_lossy(&att.unwrap().value.into_owned())
+                                    String::from_utf8_lossy(&att.unwrap().value)
                                         .to_string(),
                                 ))
                             }
