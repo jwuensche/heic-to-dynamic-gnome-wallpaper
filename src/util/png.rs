@@ -33,10 +33,10 @@ pub fn write_png(path: &str, handle: ImageHandle) -> Result<()> {
         let offset = (actual as u32 - expected) / 3 / height;
 
         let mut pngencoder = png::Encoder::new(writer, width, height);
-        pngencoder.set_color(png::ColorType::RGB);
+        pngencoder.set_color(png::ColorType::Rgb);
         pngencoder.set_depth(png::BitDepth::Eight);
         let image_writer = pngencoder.write_header()?;
-        let mut w = image_writer.into_stream_writer();
+        let mut w = image_writer.into_stream_writer()?;
 
         //println!("Writing image");
         for (_, ((red, green), blue)) in red

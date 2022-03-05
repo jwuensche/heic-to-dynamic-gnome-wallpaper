@@ -16,12 +16,12 @@ license = "GPL-3.0-only"
 anyhow = "1.0.39"
 base64 = "0.13.0"
 chrono = "0.4.19"
-clap = "2.33.3"
+clap = "3.1"
 colored = "2.0.0"
-indicatif = "0.15.0"
-libheif-rs = "0.14"
+indicatif = "0.16"
+libheif-rs = "0.15"
 plist = "1.1.0"
-png = "0.16.8"
+png = "0.17"
 quick-xml = { version = "0.22.0", features = ["serialize"] }
 serde = { version = "1.0.124", features = ["derive"] }
 

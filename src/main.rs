@@ -3,7 +3,7 @@ use colored::*;
 use libheif_rs::HeifContext;
 use std::path::Path;
 
-use clap::{App, Arg};
+use clap::{Arg, Command};
 
 mod image;
 mod metadata;
@@ -18,18 +18,17 @@ const DIR: &str = "DIR";
 const DAY_SECS: f32 = 86400.0;
 
 fn main() -> Result<()> {
-    let matches = App::new("heic-to-dynamic-gnome-wallpaper")
-        .arg(Arg::with_name(INPUT)
+    let matches = Command::new("heic-to-dynamic-gnome-wallpaper")
+        .arg(Arg::new(INPUT)
              .help("Image which should be transformed")
              .takes_value(true)
              .value_name(INPUT)
              .required(true)
         )
-
-.arg(Arg::with_name(DIR)
+        .arg(Arg::new(DIR)
              .help("Into which directory the output images and schema should be written to.")
              .long_help("Specifies into which directory created images should be written to. Default is the parent directory of the given image.")
-             .short("d")
+             .short('d')
              .long("dir")
              .takes_value(true)
              .value_name(DIR)
@@ -49,16 +48,26 @@ fn main() -> Result<()> {
     } else {
         parent_directory = std::path::Path::new(path)
             .canonicalize()
-            .map_err(|e| anyhow::Error::msg(format!("Cannot get absolute path of the given file: {}", e)))?
+            .map_err(|e| {
+                anyhow::Error::msg(format!("Cannot get absolute path of the given file: {}", e))
+            })?
             .ancestors()
             .nth(1)
-            .ok_or_else(|| anyhow::Error::msg(format!("Cannot get parent of given image path: \"{}\"", path)))?
+            .ok_or_else(|| {
+                anyhow::Error::msg(format!(
+                    "Cannot get parent of given image path: \"{}\"",
+                    path
+                ))
+            })?
             .to_path_buf();
     }
     let image_ctx = HeifContext::read_from_file(path)?;
 
     // FETCH file wide metadata
-    println!("{}: Fetch metadata from image...", "Preparation".bright_blue(),);
+    println!(
+        "{}: Fetch metadata from image...",
+        "Preparation".bright_blue(),
+    );
     let base64plist = metadata::get_wallpaper_metadata(&image_ctx);
 
     if base64plist.is_none() {
